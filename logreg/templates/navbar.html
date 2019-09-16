@@ -1,25 +1,91 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-dark">
-<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+<header>
+  <div class="container">
+    <h1 class="logo">RTO Database</h1>
 
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">About</a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link" href="#">User</a>
-      </li>
-    </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-      <button class="btn btn-danger" type="button">Login</button>
-    </form>
+    <nav>
+      <ul>
+        <li><a href="#">Login</a></li>
+        <li><a href="#">Information</a></li>
+        <li><a href="#">Head</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
   </div>
-</nav>
+</header>
+<style>
+@import url('https://fonts.googleapis.com/css?family=Work+Sans:400,600');
+body {
+margin: 0;
+background: #222;
+font-family: 'Work Sans', sans-serif;
+font-weight: 800;
+}
+
+.container {
+width: 80%;
+margin: 0 auto;
+}
+
+header {
+background: #55d6aa;
+}
+
+header::after {
+content: '';
+display: table;
+clear: both;
+}
+
+.logo {
+float: left;
+padding: 0px 0;
+font-size: 30px;
+}
+
+nav {
+float: right;
+}
+
+nav ul {
+margin: 0;
+padding: 5;
+list-style: none;
+}
+
+nav li {
+display: inline-block;
+margin-left: 70px;
+padding-top: 23px;
+
+position: relative;
+}
+
+nav a {
+color: #444;
+text-decoration: none;
+text-transform: uppercase;
+font-size: 20px;
+}
+
+nav a:hover {
+color: #000;
+}
+
+nav a::before {
+content: '';
+display: block;
+height: 5px;
+background-color: #444;
+
+position: absolute;
+top: 0;
+width: 0%;
+
+transition: all ease-in-out 250ms;
+}
+
+nav a:hover::before {
+width: 100%;
+}
+
+</style>
