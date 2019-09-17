@@ -1,16 +1,17 @@
 <header>
   <div class="contain">
     <h1 class="logo">RTO Database</h1>
-
+    <div id = "sideopt">
     <nav>
       <ul>
         <li><a href="/">Home</a></li>
         <li><a href="/about">About</a></li>
-        <li><a href="/head">Head</a></li>
-        <li><a href="/contact">Contact</a></li>
+       <!-- <li><a href="/head">Head</a></li>-->
+        <li><a href="/contact">Contact Us</a></li>
         <li><a href="/login">Login</a></li>
       </ul>
     </nav>
+  </div>
   </div>
 </header>
 <style>
@@ -94,6 +95,11 @@ transition: all ease-in-out 250ms;
 
 nav a:hover::before {
 width: 100%;
+}
+#sideopt
+{
+  position: absolute;
+  left : 700px;
 }
 
 </style>

@@ -9,6 +9,12 @@ class myform(Form):
     confirm=PasswordField('confirm')
     submit=SubmitField('send')
 app.secret_key='nandish'
+@app.route('/about')
+def about():
+    return render_template('about.html')
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
 
 @app.route('/register',methods=['POST','GET'])
 def reg():
