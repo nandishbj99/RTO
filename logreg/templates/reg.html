@@ -1,17 +1,18 @@
 {% extends "layout.html" %}
 {% block body %}
-<h1>register form</h1>
-<div>
+<div class="containerr">
+<h1>Register form:</h1>
+
 <form method=post action="">
-  {{form.username.label}}
-  {{form.username}}<br/>
-  {{form.email.label}}
-  {{form.email}}<br/>
-  {{form.password.label}}
-  {{form.password}}<br/>
-  {{form.confirm.label}}
-  {{form.confirm }}<br/>
-  {{form.submit}}
+  <label for="username">username</label>
+  <input type="text" id="username" name="username" placeholder="enter your username" required=""></br>
+  <label class="sr-only" for="email">email</label>
+  <input type="text" id="email" name="email" placeholder="enter your email" required=""></br>
+  <label for="password">password</label>
+  <input type="text" id="password" name="password" placeholder="enter your password" required=""></br>
+  <label for="confirm">confirm</label>
+  <input type="text" id="confirm" name="confirm" placeholder="confirm" required=""></br>
+  <input type="submit" name="submit" value="submit"></br>
 
   </form>
   </div>

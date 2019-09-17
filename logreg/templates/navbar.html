@@ -4,10 +4,10 @@
 
     <nav>
       <ul>
-        <li><a href="#">Login</a></li>
-        <li><a href="#">Information</a></li>
+        <li><a href="/login">Login</a></li>
+        <li><a href="/about">About</a></li>
         <li><a href="#">Head</a></li>
-        <li><a href="#">Contact</a></li>
+        <li><a href="/Contact">Contact</a></li>
       </ul>
     </nav>
   </div>
@@ -16,18 +16,19 @@
 @import url('https://fonts.googleapis.com/css?family=Work+Sans:400,600');
 body {
 margin: 0;
-background: #222;
+background: rgba(191, 199, 188, 0.774);
 font-family: 'Work Sans', sans-serif;
 font-weight: 800;
 }
 
 .container {
-width: 80%;
-margin: 0 auto;
+width: 100%;
+margin: 0px;
+padding-left:30px;
 }
 
 header {
-background: #55d6aa;
+background: #a5bbc4;
 }
 
 header::after {
@@ -38,12 +39,13 @@ clear: both;
 
 .logo {
 float: left;
-padding: 0px 0;
-font-size: 30px;
+padding-left:10px;
+font-size: 21px;
+padding-top:15px 
 }
 
 nav {
-float: right;
+float: left;
 }
 
 nav ul {
@@ -55,7 +57,7 @@ list-style: none;
 nav li {
 display: inline-block;
 margin-left: 70px;
-padding-top: 23px;
+padding-top: 10px;
 
 position: relative;
 }
