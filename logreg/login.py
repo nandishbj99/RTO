@@ -28,8 +28,10 @@ def test():
 @app.route('/login',methods=['POST','GET'])
 def login():
     if request.method=='POST':
-        user=request.form['nm']
-    return render_template("regisration_page.html")
+        user=request.form['email']
+        if (user=="nandish@gmail.com"):
+            return redirect(url_for("test"))
+    return render_template("login_page.html")
 
 if(__name__=="__main__"):
     app.run(debug=True)

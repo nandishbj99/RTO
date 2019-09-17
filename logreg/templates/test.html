@@ -3,11 +3,11 @@
       <link rel="stylesheet" href="{{url_for('static',filename='styles/myform.css')}}" type="text/css">
    </head>
    <body>
-<h1>hello world!</h1>
+<h1>hello  <p>{{dataa}}</p></h1>
       <form action = "http://localhost:5000/login" method = "post">
 
          <p>Enter Name:</p>
-         <p>{{uname}}</p>
+        
          <p><input type = "text" name = "nm" /></p>
          <p><input type = "submit" value = "submit" /></p>
       </form>
