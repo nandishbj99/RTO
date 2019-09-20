@@ -5,9 +5,9 @@
 <div class="text-center">
 <div class="containerr"> 
 <form method="POST" action="" class="form-signin">
-<img src="{{ url_for('static',filename='user_login.png')}}">
-<label class="sr-only" for="email">e-mail</label> 
-<input id="email" type="text" class="form-control" placeholder="Enter Your E-mail"><br/>
+<img src="{{ url_for('static',filename='user_login.png')}}"  width="250px" > 
+
+<br><br><input id="email" type="text" class="form-control" placeholder="Enter Your E-mail"><br/>
 <label class="sr-only" for="password">password</label>
 <input id="password" type="text" class="form-control" placeholder="Enter Your Password"><br/>
 <button type="button" class="btn-primary">Login</button><br/><br>
@@ -20,7 +20,7 @@
 .text-center{
   position:absolute;
   left :300px;
-  top : 350px;
+  top : 100px;
 }
 .btn-primary {
   width: 250px;
@@ -41,10 +41,6 @@ margin: 4px 2px;
   </style>
   </div>
   <style>
-      .page-wrap {
-          width: 960px;
-          margin: 0 auto;
-          
-          }
+      
       </style>
 {% endblock %}
