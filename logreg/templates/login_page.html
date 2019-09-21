@@ -1,11 +1,13 @@
 {% extends "layout.html" %}
 {% block body %}
-<div class="page-wrap">
-<center>
-<div class="text-center">
-<div class="containerr"> 
-<form method="POST" action="" class="form-signin">
-<img src="{{ url_for('static',filename='user_login.png')}}"  width="250px" > 
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+      </div>
+    <div class="col-md-4">
+<form method="POST" action="" class="form-group input-group-lg">
+<img class="mb-4" width="72" height="72" src="{{ url_for('static',filename='user_login.png')}}"   >
 
 <br><br><input id="email" type="text" class="form-control" placeholder="Enter Your E-mail"><br/>
 <label class="sr-only" for="password">password</label>
@@ -15,32 +17,5 @@
 </form>
 </div>
 </div>
-</center>
-<style>
-.text-center{
-  position:absolute;
-  left :300px;
-  top : 100px;
-}
-.btn-primary {
-  width: 250px;
-  padding: 16px 32px;
-font-size: 16px;
-margin: 4px 2px;
-  background-color: white; 
-  color: black; 
-  border: 2px solid #4CAF50;
-  -webkit-transition-duration: 0.4s; /* Safari */
-  transition-duration: 0.4s;
-}
-
-.btn-primary:hover {
-  background-color: #4CAF50;
-  color: white;
-}
-  </style>
-  </div>
-  <style>
-      
-      </style>
+</div>
 {% endblock %}

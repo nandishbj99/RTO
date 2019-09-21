@@ -1,123 +1,26 @@
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<header>
-    <div class="page-wrap">
-  <div class="contain">
-    <h1 class="logo">RTO Database</h1>
-    <div id = "sideopt">
-    <nav>
-      <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/about">About</a></li>
-       <!-- <li><a href="/head">Head</a></li>-->
-        <li><a href="/contact">Contact Us</a></li>
-        <li><a href="/login">Login</a></li>
-      </ul>
-    </nav>
-  </div>
-  </div>
-</header>
-<style>
-@import url('https://fonts.googleapis.com/css?family=Work+Sans:400,600');
-body {
-margin: 0;
-background: rgba(104, 178, 240, 0.664);
-font-family: "Lato", sans-serif;
-font-weight: 800;
-font-size: 28px;
-}
-
-
-.contain {
-width: 100%;
-height: 90px;
-margin: 0px;
-padding-left:30px;
-max-width: 5140px;
-padding-right: 10px;
-box-sizing: border-box;
-font-size: 28px;
-}
-
-header {
-  width : 100%;
+<nav class="navbar navouter navbar-expand-lg navbar-light" style="background-color: hsla(300, 81%, 36%, 0.616);">
   
-background: #05f6259d;
-font-size: 28px;
-}
+  <div class="container">
+<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
 
-header::after {
-content: '';
-display: table;
-clear: both;
-font-size: 28px;
-}
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav  mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/about">About</a>
+      </li>
 
-.logo {
-float: left;
-padding-left:10px;
-font-size: 40px;
-padding-top:15px;
-font-weight: 800;
-}
-
-nav {
-float: left;
-margin-left: 690px;
-
-}
-
-nav ul {
-margin: 0;
-padding: 5;
-list-style: none;
-}
-
-nav li {
- display: inline-block;
-margin-left: 20px;
-padding-top: 10px;
-
-position: relative;
-}
-
-nav a {
-color: #444;
-text-decoration: none;
-text-transform: uppercase;
-font-size: 26px;
-font-weight: 200px;
-}
-
-nav a:hover {
-color: #000;
-}
-
-nav a::before {
-content: '';
-display: block;
-height: 5px;
-background-color: #444;
-
-position: absolute;
-top: 0;
-width: 0%;
-
-transition: all ease-in-out 250ms;
-}
-
-nav a:hover::before {
-width: 100%;
-}
-#sideopt
-{
-  font-size: 45px;
-  position: absolute;
-  left : 650px;
-}
-
-</style>
-</div>
-<style>
-   
-    </style>
+      <li class="nav-item">
+        <a class="nav-link" href="/">User</a>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <button class="btn btn-primary" type="button">Login</button>
+    </form>
+  </div>
+  </div>
+</nav>
