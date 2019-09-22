@@ -50,7 +50,9 @@ body {
  
 
 <body>
-    
+    {% for mes in get_flashed_messages() %}
+    <div class="alert" role="alert">{{ mes }}</div>
+    {% endfor %}
   <div class="jumbotron pl-4 pt-4">
         <div class="container">
            <h1>  WELCOME TO RTO DATABASE</h1>

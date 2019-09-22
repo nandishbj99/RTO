@@ -6,10 +6,31 @@
 
   </div>
   <div class="col-md-4 pt-4">
-<h1>Register form:</h1><br><br>
+<h1>Register Here:</h1><br><br>
+{% from "formhelper.html" import render_field %}
+<form method=post  action="">
+<div class="form-group input-group-lg">
+  {{render_field(form.firstname, class_="form-control")}}
+</div>
+<div class="form-group input-group-lg">
+    {{render_field(form.lastname, class_="form-control")}}
+  </div>
+  
+<div class="form-group input-group-lg">
+    {{render_field(form.email, class_="form-control")}}
+  </div>
+  <div class="form-group input-group-lg">
+      {{render_field(form.phone, class_="form-control")}}
+    </div>
+  <div class="form-group input-group-lg">
+      {{render_field(form.password, class_="form-control")}}
+    </div>
+    <div class="form-group input-group-lg">
+        {{render_field(form.confirm, class_="form-control")}}
+      </div>
+      <input type="submit" name="submit" value="submit"></br>  
 
-<form method=post class="form-group input-group-lg" action="">
- 
+ <!--
   <input type="text" id="username" class="form-control" name="username" placeholder="Enter your username" required=""></br>
   
   <input type="text" id="email" class="form-control" name="email" placeholder="Enter your email" required=""></br>
@@ -18,7 +39,7 @@
  
   <input type="text" id="confirm" class="form-control" name="confirm" placeholder="Confirm" required=""></br>
   <input type="submit" name="submit" value="submit"></br>
-
+ -->
   </form>
   </div>
 </div>
