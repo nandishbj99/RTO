@@ -96,7 +96,7 @@ def login():
                     flash("please register first and login")
                     return redirect(url_for('home'))
 
-    return render_template("login_page.html",form=formm)
+    return render_template("login_page.html",form=form)
 
 if(__name__=="__main__"):
     app.run(debug=True)
