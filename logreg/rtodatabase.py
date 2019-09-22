@@ -1,14 +1,14 @@
 import sqlite3, hashlib
 
-conn = sqlite3.connect('rto.db')
+conn = sqlite3.connect('r.db')
 
 #Create table
 conn.execute('''CREATE TABLE users 
-		(userId INTEGER PRIMARY KEY AUTOINCREMENT, 
+		(userid INTEGER PRIMARY KEY AUTOINCREMENT, 
 		email TEXT,
         password TEXT,
-		firstName TEXT,
-		lastName TEXT,
-		phone TEXT
+		firstname TEXT,
+		lastname TEXT,
+		phone INTEGER
 		)''')
 conn.close()

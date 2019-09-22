@@ -3,18 +3,22 @@ from wtforms import Form,StringField,PasswordField,validators,SubmitField,TextFi
 import sqlite3,hashlib,os
 app=Flask(__name__)
 #togetlogin details:
+"""
 def getlogindetails():
-    with sqlite3.connect('rto.db') as conn:
+    with sqlite3.connect('r.db') as conn:
         cur=conn.cursor()
         if 'email' not in session:
             loggedIn=False
             loggeduname=""
         else:
-            cur.execute("SELECT firstname,lastname FROM users WHERE email= ?",(session['email']))
+            loggedIn=True
+            
+            cur.execute("SELECT firstname,lastname FROM users WHERE email= ?",(session['email'],))
             fname,lname=cur.fetchone()
+
             loggeduname=fname+""+lname
     conn.close()
-    return (loggedIn,loggeduname)
+    return (loggedIn, loggeduname)"""
 
 
 
@@ -56,7 +60,7 @@ def reg():
         phone=form.phone.data
         password=form.password.data
         email=form.email.data
-        with sqlite3.connect('rto.db') as con:
+        with sqlite3.connect('r.db') as con:
             try:
                 cur=con.cursor()
                 cur.execute("INSERT INTO users (email,password,firstname,lastname,phone) VALUES (?,?,?,?,?)",(email,hashlib.md5(password.encode()).hexdigest(),fname,lname,phone))
@@ -73,8 +77,6 @@ def reg():
 
 @app.route('/')
 def home():
-    loggedIn, loggeduname=getlogindetails()
-
     
     return render_template('home.html')
 
@@ -84,19 +86,24 @@ def login():
     if request.method=='POST' and form.validate():
         useremail=form.email.data
         upassword=form.password.data
-        with sqlite3.connect('rto.db') as con:
+        with sqlite3.connect('r.db') as con:
             cur=con.cursor()
-            cur.execute("SELECT email,password FROM users")
+            cur.execute("SELECT email,password,firstname,lastname FROM users")
             data=cur.fetchall()
             for row in data:
                 if row[0]==useremail and row[1] == hashlib.md5(upassword.encode()).hexdigest():
                     session['email']=useremail
+                    session['logname']=row[2]+" "+row[3]
                     return redirect(url_for('home'))
                 else:
                     flash("please register first and login")
                     return redirect(url_for('home'))
 
     return render_template("login_page.html",form=form)
-
+@app.route('/logout/')
+def logout():
+    session.pop('logname', None)
+    session.pop('email', None)
+    return(redirect(url_for('home')))
 if(__name__=="__main__"):
     app.run(debug=True)
