@@ -42,7 +42,11 @@ app.secret_key='nandish'
 
 @app.route('/about')
 def about():
-    return render_template('about.html')
+    with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            cur.execute("SELECT email,password,firstname,lastname FROM users")
+            data=cur.fetchall()
+            return render_template('about.html',data=data[1][0])
 
 
 
@@ -88,16 +92,14 @@ def login():
         upassword=form.password.data
         with sqlite3.connect('r.db') as con:
             cur=con.cursor()
-            cur.execute("SELECT email,password,firstname,lastname FROM users")
-            data=cur.fetchall()
-            for row in data:
-                if row[0]==useremail and row[1] == hashlib.md5(upassword.encode()).hexdigest():
-                    session['email']=useremail
-                    session['logname']=row[2]+" "+row[3]
-                    return redirect(url_for('home'))
-                else:
-                    flash("please register first and login")
-                    return redirect(url_for('home'))
+            if(cur.execute("SELECT email,password,firstname,lastname FROM users WHERE email=? and password=?",(useremail,hashlib.md5(upassword.encode()).hexdigest()))):
+                data=cur.fetchone()
+                session['email']=useremail
+                session['logname']=data[2]+" "+data[3]
+                return redirect(url_for('home'))
+            else:
+                flash("please register first and login")
+                return redirect(url_for('home'))
 
     return render_template("login_page.html",form=form)
 @app.route('/logout/')
