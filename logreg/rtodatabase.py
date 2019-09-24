@@ -12,3 +12,14 @@ conn.execute('''CREATE TABLE users
 		phone INTEGER
 		)''')
 conn.close()
+
+
+conn = sqlite3.connect('r.db')
+
+#Create table admin
+conn.execute('''CREATE TABLE `admin` (
+	`email`	TEXT NOT NULL UNIQUE,
+	`password`	INTEGER,
+	PRIMARY KEY(`email`)
+)''')
+conn.close()

@@ -96,12 +96,60 @@ def login():
                 data=cur.fetchone()
                 session['email']=useremail
                 session['logname']=data[2]+" "+data[3]
-                return redirect(url_for('home'))
+
+                flash('Loged in','success')
+                return redirect(url_for('userdash'))
             else:
                 flash("please register first and login")
                 return redirect(url_for('home'))
+                
 
     return render_template("login_page.html",form=form)
+
+
+@app.route('/dlr')
+def dlr():
+    return render_template("applydlr.html")
+
+@app.route('/llr')
+def llr():
+    return render_template("applyllr.html")
+
+@app.route('/regv')
+def regv():
+    return render_template("regv.html")
+
+@app.route('/status')
+def status():
+    return render_template("reqstatus.html")
+
+#USERDASHBOARD
+@app.route('/userdashboard')
+def userdash():
+    return render_template("userdashboard.html")
+
+@app.route('/empdashboard')
+def empdash():
+    return render_template("empdashboard.html")
+
+@app.route('/emplogin',methods=['POST','GET'])
+def emplogin():
+    form=mylogform(request.form)
+    if request.method=='POST' and form.validate():
+        empemail=form.email.data
+        emppassword=form.password.data
+        with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            if(cur.execute("SELECT email,password FROM admin WHERE email=? and password=?",(empemail,emppassword))):
+                flash('Logged in','success')
+                return redirect(url_for('empdash'))
+            else:
+                flash("please contact admin for registration")
+                return redirect(url_for('home'))
+                
+
+    return render_template("emplogin.html",form=form)
+
 @app.route('/logout/')
 def logout():
     session.pop('logname', None)
