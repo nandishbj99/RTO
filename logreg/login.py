@@ -1,6 +1,8 @@
 from flask import *
-from wtforms import Form,StringField,PasswordField,validators,SubmitField,TextField,IntegerField
+from wtforms import Form,StringField,PasswordField,validators,SubmitField,TextField,IntegerField,BooleanField
 import sqlite3,hashlib,os
+
+from flask_wtf.file import FileField, FileRequired
 app=Flask(__name__)
 #togetlogin details:
 """
@@ -38,6 +40,10 @@ class mylogform(Form):
     password=PasswordField('password',[validators.DataRequired()])
 app.secret_key='nandish'
 
+
+class llr(Form):
+    username = StringField('Username')
+    password = PasswordField('Password')
 
 
 @app.route('/about')
@@ -95,7 +101,7 @@ def login():
             if(cur.execute("SELECT email,password,firstname,lastname FROM users WHERE email=? and password=?",(useremail,hashlib.md5(upassword.encode()).hexdigest()))):
                 data=cur.fetchone()
                 session['email']=useremail
-                session['logname']=data[2]+" "+data[3]
+                session['logname']=data[2]
 
                 flash('Loged in','success')
                 return redirect(url_for('userdash'))
@@ -107,13 +113,53 @@ def login():
     return render_template("login_page.html",form=form)
 
 
+
+
 @app.route('/dlr')
 def dlr():
     return render_template("applydlr.html")
 
-@app.route('/llr')
+
+#class uploadSSLC(Form):
+ #   file = FileField()
+ #   submit = SubmitField("Submit")
+#class uploadADHAR(Form):
+  ##  file = FileField()
+    #submit = SubmitField("Submit")
+class uploadllr(Form):
+    file1 = FileField(validators=[FileRequired()])
+    submit = SubmitField("Submit")
+    file2 = FileField(validators=[FileRequired()])
+    submit2 = SubmitField("Submit")
+    file3 = FileField(validators=[FileRequired()])
+    submit3 = SubmitField("Submit")
+    check = BooleanField("Consent")
+
+
+def llrdb(name,file1,file2,file3):
+    with sqlite3.connect('r.db') as con:
+        cursor=con.cursor()
+        print("CONN DONE")
+    #cursor.execute(""" CREATE table llr(uname TEXT,file1 BLOB,file2 BLOB,file3 BLOB)""")
+        try:
+            cursor.execute(" INSERT INTO llr(uname,file1,file2,file3) VALUES(?,?,?,?)",(name,file1,file2,file3))
+        except:
+            print("ERROR")
+        con.commit()
+        cursor.close()
+        con.close()
+
+@app.route('/llr',methods=['GET','POST'])
 def llr():
-    return render_template("applyllr.html")
+    form=uploadllr(request.form)
+    print("booo")
+    if request.method=='POST' and form.validate():
+        print("YOO")
+        llrdb(name="n",file1=form.file1.data.read(),file2=form.file2.data.read(),file3=form.file3.data.read())
+        print("ERROR !")
+        return "Request Submitted"
+    return render_template("applyllr.html",form=form)
+
 
 @app.route('/regv')
 def regv():
