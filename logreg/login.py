@@ -1,9 +1,15 @@
 from flask import *
 from wtforms import Form,StringField,PasswordField,validators,SubmitField,TextField,IntegerField,BooleanField
 import sqlite3,hashlib,os
-
+from flask import request
+import os
 from flask_wtf.file import FileField, FileRequired
+from flask_sqlalchemy import SQLAlchemy
 app=Flask(__name__)
+
+
+
+
 #togetlogin details:
 """
 def getlogindetails():
@@ -126,39 +132,81 @@ def dlr():
 #class uploadADHAR(Form):
   ##  file = FileField()
     #submit = SubmitField("Submit")
-class uploadllr(Form):
+'''class uploadllr(Form):
     file1 = FileField(validators=[FileRequired()])
     submit = SubmitField("Submit")
     file2 = FileField(validators=[FileRequired()])
     submit2 = SubmitField("Submit")
     file3 = FileField(validators=[FileRequired()])
     submit3 = SubmitField("Submit")
-    check = BooleanField("Consent")
+    check = BooleanField("Consent")'''
 
 
-def llrdb(name,file1,file2,file3):
-    with sqlite3.connect('r.db') as con:
+"""def llrdb(name,file1,file2,file3):
+        with sqlite3.connect('r.db') as con:
         cursor=con.cursor()
-        print("CONN DONE")
-    #cursor.execute(""" CREATE table llr(uname TEXT,file1 BLOB,file2 BLOB,file3 BLOB)""")
+        #cursor.execute("" CREATE table llr(uname TEXT,file1 BLOB,file2 BLOB,file3 BLOB)"")
         try:
             cursor.execute(" INSERT INTO llr(uname,file1,file2,file3) VALUES(?,?,?,?)",(name,file1,file2,file3))
         except:
             print("ERROR")
         con.commit()
-        cursor.close()
-        con.close()
+        cursor.close()"""
 
-@app.route('/llr',methods=['GET','POST'])
-def llr():
-    form=uploadllr(request.form)
-    print("booo")
-    if request.method=='POST' and form.validate():
-        print("YOO")
+
+
+
+    
+
+    
+"""form=uploadllr(request.form)
+        print("booo")
+        if request.method=='POST' and form.validate(): #NOT GOING....
+        print("YOO")  #FIX THIS
         llrdb(name="n",file1=form.file1.data.read(),file2=form.file2.data.read(),file3=form.file3.data.read())
         print("ERROR !")
-        return "Request Submitted"
-    return render_template("applyllr.html",form=form)
+        return "Request Submitted
+    return render_template("applyllr.html")"""
+
+
+
+
+def llrdb(file):
+    with sqlite3.connect('r.db') as con:
+        cursor=con.cursor()
+        try:
+            cursor.execute(" CREATE table IF NOT EXISTS sample(data BLOB)")
+        except:
+            print("ERROR1")
+        try:
+            cursor.execute(" INSERT INTO sample(data) VALUES(?)",(file))
+        except:
+            print("ERROR2")
+        con.commit()
+        cursor.close()
+
+
+def convertToBinaryData(filename):
+    #Convert digital data to binary format
+    with open(filename, 'rb') as file:
+        blobData = file.read()
+    return blobData
+
+@app.route("/llr",methods=["GET","POST"])
+def llr():
+    if request.method == 'POST':
+        if request.files:
+            image = request.files["image"]
+            print(image.filename)
+            blob=image.filename
+            #blobimg = convertToBinaryData(image)
+            llrdb(blob)
+            
+            
+
+
+
+    return render_template("appllr.html")
 
 
 @app.route('/regv')

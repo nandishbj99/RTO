@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
-    <body>
+    <!--<body>
         <form class="" action="{{url_for('llr')}}" method="POST", enctype="multipart/form-data">
             {{form.csrf_token}}
             <h3>Uplaod Adhar :</h3> {{form.file1()}}
@@ -11,4 +11,16 @@
             {{form.check}} I agree to terms and conditions and i pledge that i am a citizen of india and im atleast 18 years<br><br><br>
             {{form.submit()}}            
         </form>
+        <div class ="container">
+            <form method ="POST" action="/llr" enctype="multipart/form-data">
+            <div class="form-group">
+
+                <label for="inputFile">FILE INUT</label>
+                <input type="file" name="inputFile">
+                </div>
+                <button type="submit" class="btn btn-default">Submit</button>
+            </div>
+            </form>
+        </div>-->
+        
 {%endblock%}
