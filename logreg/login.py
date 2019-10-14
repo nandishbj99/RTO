@@ -5,8 +5,10 @@ from flask import request
 import os
 from flask_wtf.file import FileField, FileRequired
 from flask_sqlalchemy import SQLAlchemy
+from flask_pymongo import PyMongo
 app=Flask(__name__)
-
+app.config["MONGO_URI"] = "mongodb://localhost:27017/rto"
+mongo = PyMongo(app)
 
 
 
@@ -203,7 +205,10 @@ def llrapply():
         blob=image.filename
         blobimg = convertToBinaryData(image)
         llrdb(blob)"""
-        return filee.filename
+        mongo.save_file(filee.filename,filee)
+        username=request.form['username']
+        mongo.db.users.insert({'username':username,'filename':filee.filename})
+        return redirect(url_for('showpdf'))
         
         
             
@@ -214,6 +219,17 @@ def llrapply():
 
 
     return render_template("appllr.html")
+
+#toshow pdff files
+@app.route('/showpdf',methods=['GET','POST'])
+def showpdf():
+    if request.method=='POST':
+        username=request.form['username']
+        user=mongo.db.users.find_one({'username':username})
+        filename=user['filename']
+        return mongo.send_file(filename)
+    return render_template("showpdf.html")
+
 
 
 @app.route('/regv')
