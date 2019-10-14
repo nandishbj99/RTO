@@ -40,18 +40,19 @@ class myform(Form):
     phone=IntegerField("Phone")
 
 
-
+#validating the login fields
 class mylogform(Form):
     email=TextField('email',[validators.Email(),validators.DataRequired()])
     password=PasswordField('password',[validators.DataRequired()])
 app.secret_key='nandish'
 
-
+#validating the llr fields
 class llr(Form):
     username = StringField('Username')
     password = PasswordField('Password')
 
 
+#about page
 @app.route('/about')
 def about():
     with sqlite3.connect('r.db') as con:
@@ -61,12 +62,12 @@ def about():
             return render_template('about.html',data=data[1][0])
 
 
-
+#contact page
 @app.route('/contact')
 def contact():
     return render_template('contact.html')
 
-
+#register page
 @app.route('/register',methods=['POST','GET'])
 def reg():
     form=myform(request.form)
@@ -90,12 +91,14 @@ def reg():
     else:
         return render_template('reg.html',form=form)
 
-
+#home page
 @app.route('/')
 def home():
     
     return render_template('home.html')
 
+
+#login page
 @app.route('/login',methods=['POST','GET'])
 def login():
     form=mylogform(request.form)
@@ -120,7 +123,7 @@ def login():
 
 
 
-
+#dlr page
 @app.route('/dlr')
 def dlr():
     return render_template("applydlr.html")
@@ -193,14 +196,18 @@ def convertToBinaryData(filename):
     return blobData
 
 @app.route("/llr",methods=["GET","POST"])
-def llr():
+def llrapply():
     if request.method == 'POST':
-        if request.files:
-            image = request.files["image"]
-            print(image.filename)
-            blob=image.filename
-            #blobimg = convertToBinaryData(image)
-            llrdb(blob)
+        filee= request.files["uploadfile"]
+        """print(image.filename)
+        blob=image.filename
+        blobimg = convertToBinaryData(image)
+        llrdb(blob)"""
+        return filee.filename
+        
+        
+            
+        
             
             
 
