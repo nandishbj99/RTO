@@ -48,14 +48,12 @@ class llr_user(Form):
     lastname=StringField('Lastname',[validators.Length(min=3,max=10)])
     email=TextField('Email',[validators.Email(),validators.DataRequired()])
     caddress=TextField('caddress',[validators.DataRequired()])
-    
-    pincode=IntegerField('pincode',[validators.Length(min=6,max=6),validators.DataRequired()])
+    pincode=IntegerField('pincode',[validators.Length(min=6,max=6)])
     district=StringField('District',[validators.DataRequired()])
     state=StringField('State',[validators.DataRequired()])
-    dob=StringField('DOB',validators.DataRequired(),validators.Length(min=10,max=10))
+    dob=StringField('DOB',[validators.DataRequired(),validators.Length(min=10,max=10)])
     gender=SelectField('gender',choices=[('male','male'),('female','female')])
-    edu_qal=StringField('edu_qal',[validators.DataRequired()])
-    phone=IntegerField("Phone")
+    phone=IntegerField('Phone')
     blood_group=StringField('Blood_Group',[validators.DataRequired()])
     
 
