@@ -4,6 +4,7 @@ import sqlite3,hashlib,os
 from flask import request
 import os
 import pdfkit
+from datetime import date,timedelta
 from flask_wtf.file import FileField, FileRequired
 from flask_sqlalchemy import SQLAlchemy
 from flask_pymongo import PyMongo
@@ -46,6 +47,7 @@ class myform(Form):
 class llr_user(Form):
     firstname=StringField('Firstname',[validators.Length(min=3,max=12)])
     lastname=StringField('Lastname',[validators.Length(min=3,max=10)])
+    fathersname=StringField('fathersname',[validators.Length(min=3,max=10)])
     email=TextField('Email',[validators.Email(),validators.DataRequired()])
     caddress=TextField('caddress',[validators.DataRequired()])
     pincode=IntegerField('pincode',[validators.Length(min=6,max=6)])
@@ -225,26 +227,42 @@ def formtopdf():
 @app.route("/llr",methods=["GET","POST"])
 def llrapply():
     form=llr_user(request.form)
-    if request.method == 'POST':
+    if request.method == 'POST' and form.validate():
         
         firstname=form.firstname.data
         lastname=form.lastname.data
+        fathersname=form.fathersname.data
         email=form.email.data
-        caddress=form.caddress.data
-        paddress=form.paddress.data
+        address=form.address.data
         pincode=form.pincode.data
+        city=form.city.data
         district=form.district.data
         state=form.state.data
+        country=form.country.data
         dob=form.dob.data
+        age=form.age.data
         gender=form.gender.data
-        eduqal=form.edu_qal.data
         phone=form.phone.data
         bloodgroup=form.blood_group.data
+        currentdate= date.today()
+        expirydate = date.today()+timedelta(30)
+        type=form.type.data
         filee= request.files["uploadfile"]#files
         mongo.save_file(filee.filename,filee)
         username=request.form['username']
         mongo.db.users.insert({'username':username,'filename':filee.filename})
-        render_template("submitted.html")
+
+        with sqlite3.connect('r.db') as con:
+            try:
+                cur=con.cursor()
+        firstname=form.firstname.data
+                cur.execute("INSERT INTO llr (firstname,lastname,fathersname,email,address,pincode,city,district,state,dob,age,gender,phone,bloodgroup,currentdate,expirydate) VALUES (?,?,?,?,?)",(email,hashlib.md5(password.encode()).hexdigest(),fname,lname,phone))
+                con.commit()
+                flash("reg successfully")
+            except:
+                con.rollback()
+                flash("error occur")
+        con.close()
     else:
         return render_template("appllr.html",form=form)
 
@@ -313,3 +331,4 @@ def logout():
     return(redirect(url_for('home')))
 if(__name__=="__main__"):
     app.run(debug=True)
+

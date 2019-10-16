@@ -1,18 +1,20 @@
 {% extends "layout.html" %}
 {% block body %}
         <div class="container">
+            <h1>Enter Details:</h1><br><br>
+            {% from "formhelper.html" import render_field %}
+            <form method=post  action="" enctype=multipart/form-data>
           <div class="row">
               <div class="col-md-4">
+                  <div class="form-group input-group-lg">
+                      {{render_field(form.firstname, class_="form-control")}}
+                    </div>
               </div>
             <div class="col-md-4">
         
         
-        <h1>Enter Details:</h1><br><br>
-        {% from "formhelper.html" import render_field %}
-        <form method=post  action="" enctype=multipart/form-data>
-        <div class="form-group input-group-lg">
-          {{render_field(form.firstname, class_="form-control")}}
-        </div>
+        
+      
         <div class="form-group input-group-lg">
           {{render_field(form.lastname, class_="form-control")}}
         </div>
@@ -43,7 +45,11 @@
         <div class="form-group input-group-lg">
           {{render_field(form.blood_group, class_="form-control")}}
         </div>
-          
+        <input type="file" name="aadhar">uploadADHAR
+        <br>
+        <input type="file" name="sslc">uploadssslc
+        <br>
+        <input type="file" name="voterid" >uploadvoterid         
             <input type="submit" value="submit">
         
           </form>
