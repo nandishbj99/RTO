@@ -22,7 +22,7 @@
           </li>
           {% else %}
           <li>
-              {{ session.get('logname') }}
+             <a href="/userdashboard"> {{ session.get('logname') }} </a>
           </li>
           <li>
               <a href="/logout">logout</a>

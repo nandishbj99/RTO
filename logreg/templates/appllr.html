@@ -1,20 +1,27 @@
-<html>
-    <head>
-        <body>
-            Helo
-
-            <form action='/llr' method="POST" enctype="multipart/form-data" >
-                <div class="form-group">
-                    <div class ="custom-file">
-                        <label>enter name:</label>
-                        <input type="text" name="username"><br/>
-                            <label class="custom-file-label" for="uploadfile">Select file</label>
-                        <input type="file" class="custom-file-input" name="uploadfile" id="uploadfile">
-                        
-                    </div>
-                </div>
-                <button type="submit">Submit</button>
-            </form>
-        </body>
-    </head>
-</html>
+{% extends "layout.html" %}
+{% block body %}
+            
+<div class="container">
+        <div class="row">
+            <div class="col-md-4">
+            </div>
+          <div class="col-md-4">
+      
+      
+      <h1>enter your details:</h1><br><br>
+      {% from "formhelper.html" import render_field %}
+      <form method=post  action="">
+      <div class="form-group input-group-lg">
+        {{render_field(form.email, class_="form-control")}}
+      </div>
+        <div class="form-group input-group-lg">
+            {{render_field(form.password, class_="form-control")}}
+          </div>
+            <input type="submit" name="login" value="login"></br>
+            <a href="/register"><button type="button" class="btn-primary">Sign-Up</button></a>
+      
+        </form>
+        </div>
+      </div>
+      </div>
+  {% endblock %}

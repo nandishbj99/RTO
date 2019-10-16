@@ -1,8 +1,9 @@
 from flask import *
-from wtforms import Form,StringField,PasswordField,validators,SubmitField,TextField,IntegerField,BooleanField
+from wtforms import Form,StringField,SelectField,PasswordField,validators,SubmitField,TextField,IntegerField,BooleanField
 import sqlite3,hashlib,os
 from flask import request
 import os
+import pdfkit
 from flask_wtf.file import FileField, FileRequired
 from flask_sqlalchemy import SQLAlchemy
 from flask_pymongo import PyMongo
@@ -34,13 +35,29 @@ def getlogindetails():
 
 #validating the register fields
 class myform(Form):
-    firstname=StringField('Firstname',[validators.Length(min=3,max=10)])
+    firstname=StringField('Firstname',[validators.Length(min=3,max=12)])
     email=TextField('Email',[validators.Email(),validators.DataRequired()])
     password=PasswordField('NewPassword',[validators.DataRequired(),validators.EqualTo('confirm', message='Passwords must match')])
     confirm=PasswordField('confirmPassword')
     lastname=StringField('Lastname',[validators.Length(min=1,max=10)])
     phone=IntegerField("Phone")
 
+#validating the LLR_user deatils
+class llr_user(Form):
+    firstname=StringField('Firstname',[validators.Length(min=3,max=12)])
+    lastname=StringField('Lastname',[validators.Length(min=3,max=10)])
+    email=TextField('Email',[validators.Email(),validators.DataRequired()])
+    caddress=TextField('caddress',[validators.DataRequired()])
+    paddress=TextField('paddress',[validators.DataRequired()])
+    pincode=IntegerField('pincode',[validators.Length(min=6,max=6),validators.DataRequired()])
+    district=StringField('District',[validators.DataRequired()])
+    state=StringField('State',[validators.DataRequired()])
+    dob=StringField('DOB',validators.DataRequired(),validators.Length(min=10,max=10))
+    gender=SelectField('gender',choices=[('male','male'),('female','female')])
+    edu_qal=StringField('edu_qal',[validators.DataRequired()])
+    phone=IntegerField("Phone")
+    blood_group=StringField('Blood_Group',[validators.DataRequired()])
+    
 
 #validating the login fields
 class mylogform(Form):
@@ -173,7 +190,21 @@ def dlr():
         return "Request Submitted
     return render_template("applyllr.html")"""
 
+#form to pdfconverter
+@app.route('/formtopdf',methods=['POST','GET'])
+def formtopdf():
+    rendered=render_template("contact.html")
+    pdf=pdfkit.from_string(rendered,False)
+    response=make_response(pdf)
+    response.headers['Content-Type']='application/pdf'
+    response.headers['Content-Disposition']='inline; filename=output.pdf'
+    response.headers['Content-Disposition']='attachment; filename=output.pdf' #downloadable file
 
+
+    
+    return response
+        
+        
 
 
 def llrdb(file):
@@ -200,11 +231,34 @@ def convertToBinaryData(filename):
 @app.route("/llr",methods=["GET","POST"])
 def llrapply():
     if request.method == 'POST':
+        form=llr_user(request.form)
+        firstname=form.firstname.data
+        lastname=form.lastname.data
+        email=form.email.data
+        caddress=form.caddress.data
+        paddress=form.paddress.data
+        pincode=form.pincode.data
+        district=form.district.data
+        state=form.state.data
+        dob=form.dob.data
+        gender=form.gender.data
+        eduqal=form.edu_qal.data
+        phone=form.phone.data
+        bloodgroup=form.blood_group.data
+    
+    state=StringField('State',[validators.DataRequired()])
+    dob=StringField('DOB',validators.DataRequired(),validators.Length(min=10,max=10))
+    gender=SelectField('gender',choices=[('male','male'),('female','female')])
+    edu_qal=StringField('edu_qal',[validators.DataRequired()])
+    phone=IntegerField("Phone")
+    blood_group=StringField('Blood_Group',[validators.DataRequired()])
+    
+
+
+
+
+
         filee= request.files["uploadfile"]
-        """print(image.filename)
-        blob=image.filename
-        blobimg = convertToBinaryData(image)
-        llrdb(blob)"""
         mongo.save_file(filee.filename,filee)
         username=request.form['username']
         mongo.db.users.insert({'username':username,'filename':filee.filename})
