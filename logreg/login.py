@@ -48,7 +48,7 @@ class llr_user(Form):
     lastname=StringField('Lastname',[validators.Length(min=3,max=10)])
     email=TextField('Email',[validators.Email(),validators.DataRequired()])
     caddress=TextField('caddress',[validators.DataRequired()])
-    paddress=TextField('paddress',[validators.DataRequired()])
+    
     pincode=IntegerField('pincode',[validators.Length(min=6,max=6),validators.DataRequired()])
     district=StringField('District',[validators.DataRequired()])
     state=StringField('State',[validators.DataRequired()])
@@ -65,10 +65,6 @@ class mylogform(Form):
     password=PasswordField('password',[validators.DataRequired()])
 app.secret_key='nandish'
 
-#validating the llr fields
-class llr(Form):
-    username = StringField('Username')
-    password = PasswordField('Password')
 
 
 #about page
@@ -207,7 +203,7 @@ def formtopdf():
         
 
 
-def llrdb(file):
+"""def llrdb(file):
     with sqlite3.connect('r.db') as con:
         cursor=con.cursor()
         try:
@@ -219,19 +215,20 @@ def llrdb(file):
         except:
             print("ERROR2")
         con.commit()
-        cursor.close()
+        cursor.close()"""
 
 
-def convertToBinaryData(filename):
+"""def convertToBinaryData(filename):
     #Convert digital data to binary format
     with open(filename, 'rb') as file:
         blobData = file.read()
-    return blobData
+    return blobData"""
 
 @app.route("/llr",methods=["GET","POST"])
 def llrapply():
+    form=llr_user(request.form)
     if request.method == 'POST':
-        """form=llr_user(request.form)
+        
         firstname=form.firstname.data
         lastname=form.lastname.data
         email=form.email.data
@@ -245,25 +242,15 @@ def llrapply():
         eduqal=form.edu_qal.data
         phone=form.phone.data
         bloodgroup=form.blood_group.data
-    
-        state=StringField('State',[validators.DataRequired()])
-        dob=StringField('DOB',validators.DataRequired(),validators.Length(min=10,max=10))
-        gender=SelectField('gender',choices=[('male','male'),('female','female')])
-        edu_qal=StringField('edu_qal',[validators.DataRequired()])
-        phone=IntegerField("Phone")
-        blood_group=StringField('Blood_Group',[validators.DataRequired()])"""
-    
-
-
-
-
-
-        filee= request.files["uploadfile"]
+        filee= request.files["uploadfile"]#files
         mongo.save_file(filee.filename,filee)
         username=request.form['username']
         mongo.db.users.insert({'username':username,'filename':filee.filename})
-        return redirect(url_for('showpdf'))
-        
+        render_template("submitted.html")
+    else:
+        return render_template("appllr.html",form=form)
+
+
         
             
         
@@ -272,7 +259,7 @@ def llrapply():
 
 
 
-    return render_template("appllr.html")
+    
 
 #toshow pdff files
 @app.route('/showpdf',methods=['GET','POST'])
