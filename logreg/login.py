@@ -231,7 +231,7 @@ def convertToBinaryData(filename):
 @app.route("/llr",methods=["GET","POST"])
 def llrapply():
     if request.method == 'POST':
-        form=llr_user(request.form)
+        """form=llr_user(request.form)
         firstname=form.firstname.data
         lastname=form.lastname.data
         email=form.email.data
@@ -246,12 +246,12 @@ def llrapply():
         phone=form.phone.data
         bloodgroup=form.blood_group.data
     
-    state=StringField('State',[validators.DataRequired()])
-    dob=StringField('DOB',validators.DataRequired(),validators.Length(min=10,max=10))
-    gender=SelectField('gender',choices=[('male','male'),('female','female')])
-    edu_qal=StringField('edu_qal',[validators.DataRequired()])
-    phone=IntegerField("Phone")
-    blood_group=StringField('Blood_Group',[validators.DataRequired()])
+        state=StringField('State',[validators.DataRequired()])
+        dob=StringField('DOB',validators.DataRequired(),validators.Length(min=10,max=10))
+        gender=SelectField('gender',choices=[('male','male'),('female','female')])
+        edu_qal=StringField('edu_qal',[validators.DataRequired()])
+        phone=IntegerField("Phone")
+        blood_group=StringField('Blood_Group',[validators.DataRequired()])"""
     
 
 
