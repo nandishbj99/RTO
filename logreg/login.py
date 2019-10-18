@@ -193,7 +193,15 @@ def dlr():
 #form to pdfconverter
 @app.route('/formtopdf',methods=['POST','GET'])
 def formtopdf():
-    rendered=render_template("llrform.html")
+    with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            email=session.get('email')
+            cur.execute("SELECT * FROM llr WHERE email=?",(email,))
+            data=cur.fetchone()
+                
+
+           
+    rendered=render_template("llrform.html",data=data)
     pdf=pdfkit.from_string(rendered,False)
     response=make_response(pdf)
     response.headers['Content-Type']='application/pdf'
