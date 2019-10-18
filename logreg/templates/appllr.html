@@ -19,13 +19,20 @@
           {{render_field(form.lastname, class_="form-control")}}
         </div>
         <div class="form-group input-group-lg">
-          {{render_field(form.email, class_="form-control")}}
+          {{render_field(form.fathersname, class_="form-control")}}
         </div>
         <div class="form-group input-group-lg">
-          {{render_field(form.caddress, class_="form-control")}}
+          {{render_field(form.email, class_="form-control")}}
+        </div>
+        
+        <div class="form-group input-group-lg">
+          {{render_field(form.address, class_="form-control")}}
         </div>
         <div class="form-group input-group-lg">
           {{render_field(form.pincode, class_="form-control")}}
+        </div>
+        <div class="form-group input-group-lg">
+          {{render_field(form.city, class_="form-control")}}
         </div>
         <div class="form-group input-group-lg">
           {{render_field(form.district, class_="form-control")}}
@@ -34,7 +41,13 @@
           {{render_field(form.state, class_="form-control")}}
         </div>
         <div class="form-group input-group-lg">
+          {{render_field(form.country, class_="form-control")}}
+        </div>
+        <div class="form-group input-group-lg">
           {{render_field(form.dob, class_="form-control")}}
+        </div>
+        <div class="form-group input-group-lg">
+          {{render_field(form.age, class_="form-control")}}
         </div>
         <div class="form-group input-group-lg">
           {{render_field(form.gender, class_="form-control")}}
@@ -45,11 +58,14 @@
         <div class="form-group input-group-lg">
           {{render_field(form.blood_group, class_="form-control")}}
         </div>
+        <div class="form-group input-group-lg">
+          {{render_field(form.typee, class_="form-control")}}
+        </div>
         <input type="file" name="aadhar">uploadADHAR
         <br>
-        <input type="file" name="sslc">uploadssslc
+        <input type="file" name="photo">upload photo
         <br>
-        <input type="file" name="voterid" >uploadvoterid         
+        <input type="file" name="signature" >upload signature         
             <input type="submit" value="submit">
         
           </form>

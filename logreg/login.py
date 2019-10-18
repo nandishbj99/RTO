@@ -6,7 +6,7 @@ import os
 import pdfkit
 from datetime import date,timedelta
 from flask_wtf.file import FileField, FileRequired
-from flask_sqlalchemy import SQLAlchemy
+
 from flask_pymongo import PyMongo
 app=Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/rto"
@@ -49,14 +49,18 @@ class llr_user(Form):
     lastname=StringField('Lastname',[validators.Length(min=3,max=10)])
     fathersname=StringField('fathersname',[validators.Length(min=3,max=10)])
     email=TextField('Email',[validators.Email(),validators.DataRequired()])
-    caddress=TextField('caddress',[validators.DataRequired()])
-    pincode=IntegerField('pincode',[validators.Length(min=6,max=6)])
+    address=TextField('caddress',[validators.DataRequired()])
+    pincode=IntegerField('pincode')
+    city=StringField('City',[validators.DataRequired()])
     district=StringField('District',[validators.DataRequired()])
     state=StringField('State',[validators.DataRequired()])
+    country=StringField('Country',[validators.DataRequired()])
     dob=StringField('DOB',[validators.DataRequired(),validators.Length(min=10,max=10)])
+    age=IntegerField('age')
     gender=SelectField('gender',choices=[('male','male'),('female','female')])
     phone=IntegerField('Phone')
     blood_group=StringField('Blood_Group',[validators.DataRequired()])
+    typee=SelectField('typee',choices=[('lmv','lmv'),('mcwg','mcwg')])
     
 
 #validating the login fields
@@ -228,7 +232,6 @@ def formtopdf():
 def llrapply():
     form=llr_user(request.form)
     if request.method == 'POST' and form.validate():
-        
         firstname=form.firstname.data
         lastname=form.lastname.data
         fathersname=form.fathersname.data
@@ -246,23 +249,33 @@ def llrapply():
         bloodgroup=form.blood_group.data
         currentdate= date.today()
         expirydate = date.today()+timedelta(30)
-        type=form.type.data
-        filee= request.files["uploadfile"]#files
-        mongo.save_file(filee.filename,filee)
-        username=request.form['username']
-        mongo.db.users.insert({'username':username,'filename':filee.filename})
-
+        typee=form.typee.data
+        aadharpdf= request.files["aadhar"]#files
+        photo= request.files["photo"]
+        signature= request.files["signature"]
+        status="pending"
         with sqlite3.connect('r.db') as con:
             try:
                 cur=con.cursor()
-        firstname=form.firstname.data
-                cur.execute("INSERT INTO llr (firstname,lastname,fathersname,email,address,pincode,city,district,state,dob,age,gender,phone,bloodgroup,currentdate,expirydate) VALUES (?,?,?,?,?)",(email,hashlib.md5(password.encode()).hexdigest(),fname,lname,phone))
+                cur.execute("INSERT INTO llr (firstname,lastname,fathername,email,address,pincode,city,district,state,country,dob,age,gender,phone,bloodgroup,currentdate,expirydate,status,type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(firstname,lastname,fathersname,email,address,pincode,city,district,state,country,dob,age,gender,phone,bloodgroup,currentdate,expirydate,status,typee))
                 con.commit()
                 flash("reg successfully")
             except:
                 con.rollback()
                 flash("error occur")
         con.close()
+        with sqlite3.connect('r.db') as conn:
+            cur=conn.cursor()
+            if(cur.execute("SELECT id FROM llr WHERE email=?",(email))):
+                data=cur.fetchone()
+                mongo.save_file(aadharpdf.filename,aadharpdf)
+                mongo.save_file(signature.filename,signature)
+                mongo.save_file(photo.filename,photo)
+                mongo.db.users.insert({'kas':"123",'aadharpdf':aadharpdf.filename,'signature':signature.filename,'photo':photo.filename})
+            else:
+                flash("error or no data")
+        conn.close()
+        return redirect(url_for('userdash'))
     else:
         return render_template("appllr.html",form=form)
 
