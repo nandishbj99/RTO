@@ -193,16 +193,15 @@ def dlr():
 #form to pdfconverter
 @app.route('/formtopdf',methods=['POST','GET'])
 def formtopdf():
-    with sqlite3.connect('r.db') as con:
+    """with sqlite3.connect('r.db') as con:
             cur=con.cursor()
             email=session.get('email')
             cur.execute("SELECT * FROM llr WHERE email=?",(email,))
             data=cur.fetchone()       
-    rendered=render_template("llrform.html",data=data)
-    pdf=pdfkit.from_string(rendered,False)
+    rendered=render_template("llrform.html",data=data)"""
+    pdf=pdfkit.from_url('http://127.0.0.1:5000/success',False)
     response=make_response(pdf)
     response.headers['Content-Type']='application/pdf'
-    response.headers['Content-Disposition']='inline; filename=llr.pdf'
     response.headers['Content-Disposition']='attachment; filename=llr.pdf' #downloadable file 
     return response
         
@@ -330,7 +329,14 @@ def status():
 
 @app.route('/success')
 def success():
-    return render_template("success.html")
+    with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            email=session.get('email')
+            cur.execute("SELECT * FROM llr WHERE email=?",(email,))
+            data=cur.fetchone()
+            ren=render_template("llrform.html",data=data)       
+    
+    return ren
 
 #USERDASHBOARD
 @app.route('/userdashboard')
