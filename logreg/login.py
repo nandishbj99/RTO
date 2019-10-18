@@ -314,15 +314,14 @@ def regv():
 def status():
     with sqlite3.connect('r.db') as con:
             cur=con.cursor()
-            cur.execute("select status from llr where email = ?",(session.get('email'),))
+            cur.execute("SELECT status FROM llr WHERE email = ?",(session.get('email'),))
             st=cur.fetchone()
-            if st == "pending":
+            if st[0] == "pending":
                 return render_template("statuspending.html") 
-            elif st == "declined":
+            elif st[0] == "declined":
                 return render_template("statusdeclined.html")
             else:
                 return render_template("statusaccepted.html")
-            print(st)
             con.close()
     
 
