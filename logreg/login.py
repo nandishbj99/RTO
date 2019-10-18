@@ -250,7 +250,12 @@ def llrapply():
         currentdate= date.today()
         expirydate = date.today()+timedelta(30)
         typee=form.typee.data
-        aadharpdf= request.files["aadhar"]#files
+
+        #files_
+        
+        aadharpdf= request.files["aadhar"]  
+        sslcpdf = request.files["sslc"]
+        voteridpdf = request.files["voterid"]
         photo= request.files["photo"]
         signature= request.files["signature"]
         status="pending"
@@ -260,22 +265,21 @@ def llrapply():
                 cur.execute("INSERT INTO llr (firstname,lastname,fathername,email,address,pincode,city,district,state,country,dob,age,gender,phone,bloodgroup,currentdate,expirydate,status,type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(firstname,lastname,fathersname,email,address,pincode,city,district,state,country,dob,age,gender,phone,bloodgroup,currentdate,expirydate,status,typee))
                 con.commit()
                 flash("reg successfully")
+                try:
+                    mongo.save_file(aadharpdf.filename,aadharpdf)
+                    mongo.save_file(sslcpdf.filename,sslcpdf)
+                    mongo.save_file(voteridpdf.filename,voteridpdf)
+                    mongo.save_file(signature.filename,signature)
+                    mongo.save_file(photo.filename,photo)
+                    mongo.db.users.insert({'email':email,'aadharpdf':aadharpdf.filename,'sslcpdf':sslcpdf.filename,'voterid':voteridpdf.filename,'signature':signature.filename,'photo':photo.filename})
+                except:
+                    print("mongo error")
             except:
                 con.rollback()
                 flash("error occur")
         con.close()
-        with sqlite3.connect('r.db') as conn:
-            cur=conn.cursor()
-            if(cur.execute("SELECT id FROM llr WHERE email=?",(email))):
-                data=cur.fetchone()
-                mongo.save_file(aadharpdf.filename,aadharpdf)
-                mongo.save_file(signature.filename,signature)
-                mongo.save_file(photo.filename,photo)
-                mongo.db.users.insert({'kas':"123",'aadharpdf':aadharpdf.filename,'signature':signature.filename,'photo':photo.filename})
-            else:
-                flash("error or no data")
-        conn.close()
-        return redirect(url_for('userdash'))
+                
+        return redirect(url_for('success'))
     else:
         return render_template("appllr.html",form=form)
 
@@ -308,7 +312,23 @@ def regv():
 
 @app.route('/status')
 def status():
-    return render_template("reqstatus.html")
+    with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            cur.execute("select status from llr where email = ?",(session.get('email'),))
+            st=cur.fetchone()
+            if st == "pending":
+                return render_template("statuspending.html") 
+            elif st == "declined":
+                return render_template("statusdeclined.html")
+            else:
+                return render_template("statusaccepted.html")
+            print(st)
+            con.close()
+    
+
+@app.route('/success')
+def success():
+    return render_template("success.html")
 
 #USERDASHBOARD
 @app.route('/userdashboard')
