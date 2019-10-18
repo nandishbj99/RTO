@@ -193,15 +193,12 @@ def dlr():
 #form to pdfconverter
 @app.route('/formtopdf',methods=['POST','GET'])
 def formtopdf():
-    rendered=render_template("contact.html")
+    rendered=render_template("llrform.html")
     pdf=pdfkit.from_string(rendered,False)
     response=make_response(pdf)
     response.headers['Content-Type']='application/pdf'
     response.headers['Content-Disposition']='inline; filename=output.pdf'
-    response.headers['Content-Disposition']='attachment; filename=output.pdf' #downloadable file
-
-
-    
+    response.headers['Content-Disposition']='attachment; filename=output.pdf' #downloadable file 
     return response
         
         
@@ -283,7 +280,7 @@ def llrapply():
     else:
         return render_template("appllr.html",form=form)
 
-
+ 
         
             
         
