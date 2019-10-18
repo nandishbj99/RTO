@@ -323,7 +323,7 @@ def status():
                 return render_template("statuspending.html") 
             elif st[0] == "declined":
                 return render_template("statusdeclined.html")
-            elif st[0]=="accepted":
+            else:
                 return render_template("statusaccepted.html")
             con.close()
     
