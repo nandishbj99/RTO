@@ -197,16 +197,13 @@ def formtopdf():
             cur=con.cursor()
             email=session.get('email')
             cur.execute("SELECT * FROM llr WHERE email=?",(email,))
-            data=cur.fetchone()
-                
-
-           
+            data=cur.fetchone()       
     rendered=render_template("llrform.html",data=data)
     pdf=pdfkit.from_string(rendered,False)
     response=make_response(pdf)
     response.headers['Content-Type']='application/pdf'
-    response.headers['Content-Disposition']='inline; filename=output.pdf'
-    response.headers['Content-Disposition']='attachment; filename=output.pdf' #downloadable file 
+    response.headers['Content-Disposition']='inline; filename=llr.pdf'
+    response.headers['Content-Disposition']='attachment; filename=llr.pdf' #downloadable file 
     return response
         
         
@@ -314,6 +311,7 @@ def showpdf():
 @app.route('/regv')
 def regv():
     return render_template("regv.html")
+
 
 @app.route('/status')
 def status():
