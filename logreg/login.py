@@ -14,6 +14,15 @@ mongo = PyMongo(app)
 
 #::::::::::::::::::::::::::::::::::::::::class::::::::::::::::::::::::::
 
+class ChoicesByDb(object):
+    def __iter__(self):
+        with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            cur.execute("SELECT * FROM rtocodes")
+            data=cur.fetchall()
+        for row in data:
+            pair = (row[1],row[1]+" "+row[2])
+            yield pair
 
 #validating the register fields
 class myform(Form):
@@ -42,6 +51,7 @@ class llr_user(Form):
     phone=IntegerField('Phone')
     blood_group=StringField('Blood_Group',[validators.DataRequired()])
     typee=SelectField('typee',choices=[('lmv','LWM'),('mcwg','MCWG'),('both','LMV + MCWG')])
+    rtooffice=SelectField(choices=ChoicesByDb(),label="rtooffice")
     
 
 #validating the login fields
@@ -49,6 +59,8 @@ class mylogform(Form):
     email=TextField('email',[validators.Email(),validators.DataRequired()])
     password=PasswordField('password',[validators.DataRequired()])
 app.secret_key='nandish'
+
+
 
 #:::::::::::::::::::::::::::::::::entry main pages::::::::::::::::::::::::::::::::::::::
 #home page
@@ -65,7 +77,7 @@ def about():
             cur=con.cursor()
             cur.execute("SELECT email,password,firstname,lastname FROM users")
             data=cur.fetchall()
-            return render_template('about.html',data=data[1][0])
+            return render_template('about.html',data=data[0][2])
 
 
 #contact page
@@ -167,6 +179,7 @@ def llrapply():
         currentdate= date.today()
         expirydate = date.today()+timedelta(30)
         typee=form.typee.data
+        rtooffice=form.rtooffice.data
 
         #files_
         
@@ -179,7 +192,7 @@ def llrapply():
         with sqlite3.connect('r.db') as con:
             try:
                 cur=con.cursor()
-                cur.execute("INSERT INTO llr (firstname,lastname,fathername,email,address,pincode,city,district,state,country,dob,age,gender,phone,bloodgroup,currentdate,expirydate,status,type) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(firstname,lastname,fathersname,email,address,pincode,city,district,state,country,dob,age,gender,phone,bloodgroup,currentdate,expirydate,status,typee))
+                cur.execute("INSERT INTO llr (firstname,lastname,fathername,email,address,pincode,city,district,state,country,dob,age,gender,phone,bloodgroup,currentdate,expirydate,status,type,rto) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(firstname,lastname,fathersname,email,address,pincode,city,district,state,country,dob,age,gender,phone,bloodgroup,currentdate,expirydate,status,typee,rtooffice))
                 con.commit()
                 flash("reg successfully")
                 try:
@@ -196,8 +209,9 @@ def llrapply():
                 flash("error occur")
         con.close()
                 
-        return redirect(url_for('success'))
+        return redirect(url_for('userdash'))
     else:
+        
         return render_template("appllr.html",form=form)
 
 #toshow pdff files
@@ -359,4 +373,3 @@ def emplogin():
     return render_template("applyllr.html")"""
 if(__name__=="__main__"):
     app.run(debug=True)
-
