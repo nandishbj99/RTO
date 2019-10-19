@@ -239,13 +239,14 @@ def userdash():
 #::::::::::::::::::::::::::::::DLR:::::::::::::::::::::::::::::::::::::::::::::::
 @app.route('/dlr',methods=["GET","POST"])
 def dlr():
+    currentdate = date.today()
+    expirydate = date.today()+timedelta(3650)
     if request.method=='POST':
         with sqlite3.connect('r.db') as con:
             cur=con.cursor()
-            cur.execute("INSERT INTO dlr(email,status) VALUES(?,?)",(session.get('email'),"pending"))
+            cur.execute("INSERT INTO dlr(email,currentdate,expirydate,status,dlnumber) VALUES(?,?,?,?,?)",(session.get('email'),currentdate,expirydate,"pending","000000000"))
             con.commit()
-        con.close()
-        flash("success")
+        flash("Regestered Successfully")
         return render_template('userdashboard.html')
 
 
@@ -254,10 +255,10 @@ def dlr():
             cur.execute("SELECT status FROM llr WHERE email = ?",(session.get('email'),))
             st=cur.fetchone()
             if st[0] == "accepted":
-                con.close()
+                
                 return render_template("appdlr.html")
             else:
-                con.close()
+               
                 flash("Please Apply For LLR First")
                 return render_template('userdashboard.html')
 
