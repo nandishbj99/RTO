@@ -41,7 +41,7 @@ class llr_user(Form):
     gender=SelectField('gender',choices=[('male','male'),('female','female')])
     phone=IntegerField('Phone')
     blood_group=StringField('Blood_Group',[validators.DataRequired()])
-    typee=SelectField('typee',choices=[('lmv','lmv'),('mcwg','mcwg')])
+    typee=SelectField('typee',choices=[('lmv','LWM'),('mcwg','MCWG'),('both','LMV + MCWG')])
     
 
 #validating the login fields
@@ -80,7 +80,7 @@ def logout():
     session.pop('email', None)
     return(redirect(url_for('home')))
 
-#:::::::::::::::::::::::::::::::::::::::::::::users pages::::::::::::::::::::::::::::
+#:::::::::::::::::::::::::::::::::::::::::::::users pages:::::::::::::::::::::::::::::::
 #register page
 @app.route('/register',methods=['POST','GET'])
 def reg():
@@ -129,18 +129,9 @@ def login():
 
     return render_template("login_page.html",form=form)
 
-
-
-#dlr page
-@app.route('/dlr')
-def dlr():
-    return render_template("applydlr.html")
-
-
-
-#form to pdfconverter
-@app.route('/formtopdf',methods=['POST','GET'])
-def formtopdf():
+#LLR_DOWNLOADING
+@app.route('/llrdownload',methods=['POST','GET'])
+def llrdownload():
     with sqlite3.connect('r.db') as con:
             cur=con.cursor()
             email=session.get('email')
@@ -209,17 +200,6 @@ def llrapply():
     else:
         return render_template("appllr.html",form=form)
 
- 
-        
-            
-        
-            
-            
-
-
-
-    
-
 #toshow pdff files
 @app.route('/showpdf',methods=['GET','POST'])
 def showpdf():
@@ -251,25 +231,26 @@ def status():
                 return render_template("statusaccepted.html")
             con.close()
     
-
-@app.route('/success')
-def success():
-    with sqlite3.connect('r.db') as con:
-            cur=con.cursor()
-            email=session.get('email')
-            cur.execute("SELECT * FROM llr WHERE email=?",(email,))
-            data=cur.fetchone()
-            ren=render_template("llrform.html",data=data)       
-    
-    return ren
-
 #USERDASHBOARD
 @app.route('/userdashboard')
 def userdash():
     return render_template("userdashboard.html")
 
+#::::::::::::::::::::::::::::::DLR:::::::::::::::::::::::::::::::::::::::::::::::
+@app.route('/dlr',methods=["GET","POST"])
+def dlr():
+    with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            cur.execute("SELECT status FROM llr WHERE email = ?",(session.get('email'),))
+            st=cur.fetchone()
+            if st[0] == "accepted":
+                return render_template("appdlr.html")
+                cur.execute("INSERT INTO dlr(email,status) VALUES(?,?)",(session.get('email'),"pending"))
+            
+            else:
+                flash("Please Apply For LLR First")
 
-
+    
 
 
 
