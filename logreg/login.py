@@ -12,26 +12,7 @@ app=Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/rto"
 mongo = PyMongo(app)
 
-
-
-#togetlogin details:
-"""
-def getlogindetails():
-    with sqlite3.connect('r.db') as conn:
-        cur=conn.cursor()
-        if 'email' not in session:
-            loggedIn=False
-            loggeduname=""
-        else:
-            loggedIn=True
-            
-            cur.execute("SELECT firstname,lastname FROM users WHERE email= ?",(session['email'],))
-            fname,lname=cur.fetchone()
-
-            loggeduname=fname+""+lname
-    conn.close()
-    return (loggedIn, loggeduname)"""
-
+#::::::::::::::::::::::::::::::::::::::::class::::::::::::::::::::::::::
 
 
 #validating the register fields
@@ -69,6 +50,12 @@ class mylogform(Form):
     password=PasswordField('password',[validators.DataRequired()])
 app.secret_key='nandish'
 
+#:::::::::::::::::::::::::::::::::entry main pages::::::::::::::::::::::::::::::::::::::
+#home page
+@app.route('/')
+def home():
+    
+    return render_template('home.html')
 
 
 #about page
@@ -86,6 +73,14 @@ def about():
 def contact():
     return render_template('contact.html')
 
+
+@app.route('/logout/')
+def logout():
+    session.pop('logname', None)
+    session.pop('email', None)
+    return(redirect(url_for('home')))
+
+#:::::::::::::::::::::::::::::::::::::::::::::users pages::::::::::::::::::::::::::::
 #register page
 @app.route('/register',methods=['POST','GET'])
 def reg():
@@ -109,12 +104,6 @@ def reg():
         return redirect(url_for('home'))
     else:
         return render_template('reg.html',form=form)
-
-#home page
-@app.route('/')
-def home():
-    
-    return render_template('home.html')
 
 
 #login page
@@ -148,86 +137,22 @@ def dlr():
     return render_template("applydlr.html")
 
 
-#class uploadSSLC(Form):
- #   file = FileField()
- #   submit = SubmitField("Submit")
-#class uploadADHAR(Form):
-  ##  file = FileField()
-    #submit = SubmitField("Submit")
-'''class uploadllr(Form):
-    file1 = FileField(validators=[FileRequired()])
-    submit = SubmitField("Submit")
-    file2 = FileField(validators=[FileRequired()])
-    submit2 = SubmitField("Submit")
-    file3 = FileField(validators=[FileRequired()])
-    submit3 = SubmitField("Submit")
-    check = BooleanField("Consent")'''
-
-
-"""def llrdb(name,file1,file2,file3):
-        with sqlite3.connect('r.db') as con:
-        cursor=con.cursor()
-        #cursor.execute("" CREATE table llr(uname TEXT,file1 BLOB,file2 BLOB,file3 BLOB)"")
-        try:
-            cursor.execute(" INSERT INTO llr(uname,file1,file2,file3) VALUES(?,?,?,?)",(name,file1,file2,file3))
-        except:
-            print("ERROR")
-        con.commit()
-        cursor.close()"""
-
-
-
-
-    
-
-    
-"""form=uploadllr(request.form)
-        print("booo")
-        if request.method=='POST' and form.validate(): #NOT GOING....
-        print("YOO")  #FIX THIS
-        llrdb(name="n",file1=form.file1.data.read(),file2=form.file2.data.read(),file3=form.file3.data.read())
-        print("ERROR !")
-        return "Request Submitted
-    return render_template("applyllr.html")"""
 
 #form to pdfconverter
 @app.route('/formtopdf',methods=['POST','GET'])
 def formtopdf():
-    """with sqlite3.connect('r.db') as con:
+    with sqlite3.connect('r.db') as con:
             cur=con.cursor()
             email=session.get('email')
             cur.execute("SELECT * FROM llr WHERE email=?",(email,))
             data=cur.fetchone()       
-    rendered=render_template("llrform.html",data=data)"""
-    pdf=pdfkit.from_url('http://127.0.0.1:5000/success',False)
+    rendered=render_template("llrform.html",data=data)
+    pdf=pdfkit.from_string(rendered,False)
     response=make_response(pdf)
     response.headers['Content-Type']='application/pdf'
     response.headers['Content-Disposition']='attachment; filename=llr.pdf' #downloadable file 
     return response
         
-        
-
-
-"""def llrdb(file):
-    with sqlite3.connect('r.db') as con:
-        cursor=con.cursor()
-        try:
-            cursor.execute(" CREATE table IF NOT EXISTS sample(data BLOB)")
-        except:
-            print("ERROR1")
-        try:
-            cursor.execute(" INSERT INTO sample(data) VALUES(?)",(file))
-        except:
-            print("ERROR2")
-        con.commit()
-        cursor.close()"""
-
-
-"""def convertToBinaryData(filename):
-    #Convert digital data to binary format
-    with open(filename, 'rb') as file:
-        blobData = file.read()
-    return blobData"""
 
 @app.route("/llr",methods=["GET","POST"])
 def llrapply():
@@ -343,6 +268,13 @@ def success():
 def userdash():
     return render_template("userdashboard.html")
 
+
+
+
+
+
+
+#:::::::::::::::::::::::::::::::::::::::::::employee:::::::::::::::::::::::::::::::::::::::::
 @app.route('/empdashboard')
 def empdash():
     return render_template("empdashboard.html")
@@ -365,11 +297,73 @@ def emplogin():
 
     return render_template("emplogin.html",form=form)
 
-@app.route('/logout/')
-def logout():
-    session.pop('logname', None)
-    session.pop('email', None)
-    return(redirect(url_for('home')))
+
+
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#class uploadSSLC(Form):
+ #   file = FileField()
+ #   submit = SubmitField("Submit")
+#class uploadADHAR(Form):
+  ##  file = FileField()
+    #submit = SubmitField("Submit")
+'''class uploadllr(Form):
+    file1 = FileField(validators=[FileRequired()])
+    submit = SubmitField("Submit")
+    file2 = FileField(validators=[FileRequired()])
+    submit2 = SubmitField("Submit")
+    file3 = FileField(validators=[FileRequired()])
+    submit3 = SubmitField("Submit")
+    check = BooleanField("Consent")'''
+
+
+"""def llrdb(name,file1,file2,file3):
+        with sqlite3.connect('r.db') as con:
+        cursor=con.cursor()
+        #cursor.execute("" CREATE table llr(uname TEXT,file1 BLOB,file2 BLOB,file3 BLOB)"")
+        try:
+            cursor.execute(" INSERT INTO llr(uname,file1,file2,file3) VALUES(?,?,?,?)",(name,file1,file2,file3))
+        except:
+            print("ERROR")
+        con.commit()
+        cursor.close()"""
+
+        
+
+
+"""def llrdb(file):
+    with sqlite3.connect('r.db') as con:
+        cursor=con.cursor()
+        try:
+            cursor.execute(" CREATE table IF NOT EXISTS sample(data BLOB)")
+        except:
+            print("ERROR1")
+        try:
+            cursor.execute(" INSERT INTO sample(data) VALUES(?)",(file))
+        except:
+            print("ERROR2")
+        con.commit()
+        cursor.close()"""
+
+
+"""def convertToBinaryData(filename):
+    #Convert digital data to binary format
+    with open(filename, 'rb') as file:
+        blobData = file.read()
+    return blobData"""
+
+
+
+    
+
+    
+"""form=uploadllr(request.form)
+        print("booo")
+        if request.method=='POST' and form.validate(): #NOT GOING....
+        print("YOO")  #FIX THIS
+        llrdb(name="n",file1=form.file1.data.read(),file2=form.file2.data.read(),file3=form.file3.data.read())
+        print("ERROR !")
+        return "Request Submitted
+    return render_template("applyllr.html")"""
 if(__name__=="__main__"):
     app.run(debug=True)
 
