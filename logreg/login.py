@@ -53,8 +53,29 @@ class llr_user(Form):
     typee=SelectField('typee',choices=[('lmv','LWM'),('mcwg','MCWG'),('both','LMV + MCWG')])
     rtooffice=SelectField(choices=ChoicesByDb(),label="rtooffice")
     
+class regvehi(Form):
+    firstname=StringField('Firstname',[validators.Length(min=3,max=12)])
+    lastname=StringField('Lastname',[validators.Length(min=3,max=10)])
+    fathersname=StringField('fathersname',[validators.Length(min=3,max=10)])
+    email=TextField('Email',[validators.Email(),validators.DataRequired()])
+    address=TextField('caddress',[validators.DataRequired()])
+    enginenumber=StringField('enginename',[validators.Length(min=10,max=10)])
+    ownership=SelectField('ownership',choices=[('1','INDIVIDUAL'),('2','MULTIPLE OWNER'),('3','CORPORATION')])
+    vetype = SelectField('vtype',choices=[('transport','TRANSPORT'),('nontransport','NON TRANSPORT')])
+    vclass = SelectField('vclass',choices=[('car','CAR'),('bike','M-CYCLE'),('scooty','M-SCOOTER'),('bus','OB-BUS'),('truck','TWITPKV-TRUCK')])
+    purchasedate = StringField('purchasedate')
+    manufacture = StringField('manufacturer')
+    modelname = StringField('model_name')
+    manufacturedate = StringField('manufacturedate')
+    fuel = SelectField('Fuel',choices = [('petrol','PEETROL'),('diesel','DIESEL'),('lpg','LPG / DIE'),('electric','ELECTRIC'),('solor','SOLOR')])
+    color = StringField('color')
+    insurencecompany = StringField('Insurance Company')
+    datefrom = StringField('From')
+    dateto = StringField('To')
+    insurancenumber = StringField('Cover Number', [validators.Length(min=10,max=10)])
 
-#validating the login fields
+
+
 class mylogform(Form):
     email=TextField('email',[validators.Email(),validators.DataRequired()])
     password=PasswordField('password',[validators.DataRequired()])
@@ -226,9 +247,51 @@ def showpdf():
 
 
 
-@app.route('/regv')
+@app.route('/regv', methods=['GET','POST'])
 def regv():
-    return render_template("regv.html")
+    form=regvehi(request.form)
+    if request.method == 'POST' and form.validate():
+            firstname=form.firstname.data
+            lastname=form.lastname.data
+            fathersname=form.fathersname.data
+            email=form.email.data
+            address=form.address.data
+            enginenumber=form.enginenumber.data
+            ownership=form.ownership.data
+            vetype = form.vetype.data
+            vclass = form.vclass.data
+            purchasedate = form.purchasedate.data
+            manufacture = form.manufacture.data
+            modelname = form.modelname.data
+            manufacturedate = form.manufacturedate.data
+            fuel = form.fuel.data
+            color = form.color.data
+            insurencecompany = form.insurencecompany.data
+            datefrom = form.datefrom.data
+            dateto = form.dateto.data
+            insurancenumber = form.insurancenumber.data
+            #PHOTOS 
+            pic1 = request.files["Picture1"]
+            pic2 = request.files["Picture2"]
+            pic3 = request.files["Picture3"]
+
+            with sqlite3.connect('r.db') as con:
+                try:
+                    cur=con.cursor()
+                    cur.execute("INSERT INTO vehicle VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(firstname,lastname,fathersname,email,address,enginenumber,ownership,vetype,vclass,purchasedate,manufacture,modelname,manufacturedate,fuel,color,insurencecompany,datefrom,dateto,insurancenumber,0))
+                    cur.commit()
+                    mongo.save_file(pic1.filename,pic1)
+                    mongo.save_file(pic2.filename,pic3)
+                    mongo.save_file(pic3.filename,pic2)
+                    mongo.db.vehicles.insert({'email':email,'pic1':pic1.filename,'pic2':pic2.filename,'pic2':pic2.filename})
+                except:
+                    print("error")
+                
+            return redirect(url_for('userdash'))
+            flash("Registerd Successfully")
+    else:
+        
+        return render_template("regv.html",form=form)
 
 
 @app.route('/status')

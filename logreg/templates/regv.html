@@ -1,65 +1,90 @@
-<html>
-<head>
-<title>registration form</title>
-</head>
+{% extends "layout.html" %}
+{% block body %}
+        <div class="container">
+            <h1>Enter Details:</h1><br><br>
+            {% from "formhelper.html" import render_field %}
+            <form method=post  action="" enctype=multipart/form-data>
+          <div class="row">
+              <div class="col-md-4">
+                  <div class="form-group input-group-lg">
+                      {{render_field(form.firstname, class_="form-control")}}
+                    </div>
+              </div>
+            <div class="col-md-4">
+        
+        
+        
+      
+        <div class="form-group input-group-lg">
+          {{render_field(form.lastname, class_="form-control")}}
+        </div>
+        <div class="form-group input-group-lg">
+          {{render_field(form.fathersname, class_="form-control")}}
+        </div>
+        <div class="form-group input-group-lg">
+          {{render_field(form.email, class_="form-control")}}
+        </div>
+        
+        <div class="form-group input-group-lg">
+          {{render_field(form.address, class_="form-control")}}
+        </div>
+        <div class="form-group input-group-lg">
+          {{render_field(form.enginenumber, class_="form-control")}}
+        </div>
+        <div class="form-group input-group-lg">
+          {{render_field(form.ownership, class_="form-control")}}
+        </div>
+        <div class="form-group input-group-lg">
+          {{render_field(form.vetype, class_="form-control")}}
+        </div>
+        <div class="form-group input-group-lg">
+          {{render_field(form.vclass, class_="form-control")}}
+        </div>
+        <div class="form-group input-group-lg">
+          {{render_field(form.purchasedate, class_="form-control")}}
+        </div>
+        <div class="form-group input-group-lg">
+          {{render_field(form.manufacture, class_="form-control")}}
+        </div>
+        <div class="form-group input-group-lg">
+          {{render_field(form.modelname, class_="form-control")}}
+        </div>
+        <div class="form-group input-group-lg">
+          {{render_field(form.manufacturedate, class_="form-control")}}
+        </div>
+        <div class="form-group input-group-lg">
+          {{render_field(form.fuel, class_="form-control")}}
+        </div>
+        <div class="form-group input-group-lg">
+          {{render_field(form.color, class_="form-control")}}
+        </div>
+        <div class="form-group input-group-lg">
+          {{render_field(form.insurencecompany, class_="form-control")}}
+        </div>
+        <div class="form-group input-group-lg">
+          {{render_field(form.datefrom, class_="form-control")}}
+        </div>
+        <div class="form-group input-group-lg">
+            {{render_field(form.dateto, class_="form-control")}}
+          </div>
+          <div class="form-group input-group-lg">
+            {{render_field(form.insurancenumber, class_="form-control")}}
+          </div>
+        <input type="file" name="Picture1">uploadADHAR
+        <br>
+        <input type="file" name="Picture2">upload photo
+        <br>
+        <input type="file" name="Picture3">upload sslc
+        <br>
+        <input type="submit" value="submit">
+  </div>     
+           
+        
+          </form>
+          </div>
+        </div>
+        </div>
 
-<h2 ALIGN="CENTER">Registration form</h2>
-
-<form action="Welcome.html" method="post">
-<table border="0" align="center">
-<tbody>
-
-<tr>
-<td><label for="id">Id: </label></td>
-<td><input id="id" maxlength="50" name="name" type="text" /></td>
-</tr>
-
-<tr>
-<td><label for="name">Name: </label></td>
-<td><input id="name" maxlength="50" name="name" type="text" /></td>
-</tr>
-
-<tr>
-<td><label for="course">Course: </label></td>
-<td><input id="course" maxlength="50" name="course" type="text" /></td>
-</tr>
-
-<tr>
-<td><label for="branch">Branch: </label></td>
-<td><input id="branch" maxlength="50" name="branch" type="text" /></td>
-</tr>
-
-<tr>
-<td><label for="rolln0">Rollno: </label></td>
-<td><input id="rollno" maxlength="50" name="rollno" type="text" /></td>
-</tr>
-
-<tr>
-<td><label for="email">Email_Address:</label></td>
-<td><input id="email" maxlength="50" name="email" type="text" /></td>
-</tr>
-
-<tr>
-<td><label for="username">User_Name:</label></td>
-<td><input id="username" maxlength="50" name="username" type="text" /></td>
-</tr>
-
-<tr>
-<td><label for="aboutus">About Us:</label></td>
-<td valign="middle" align="center"><textarea></textarea></td>
-</tr>
-
-<tr>
-<td><label for="password">Password:</label></td>
-<td><input id="password" maxlength="50" name="password"
-type="password" /></td>
-</tr>
-
-<tr>
-<td align="right"><input name="Submit" type="Submit" value="Add" /></td>
-</tr>
-
-</tbody>
-</table>
-</form>
-</html>
+        
+        
+  {% endblock %}
