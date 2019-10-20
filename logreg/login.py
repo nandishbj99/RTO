@@ -80,7 +80,10 @@ class mylogform(Form):
     email=TextField('email',[validators.Email(),validators.DataRequired()])
     password=PasswordField('password',[validators.DataRequired()])
 app.secret_key='nandish'
-
+class emplogform(Form):
+    email=TextField('email',[validators.Email(),validators.DataRequired()])
+    password=PasswordField('password',[validators.DataRequired()])
+    secretkey=PasswordField('secretkey',[validators.DataRequired()])
 
 
 #:::::::::::::::::::::::::::::::::entry main pages::::::::::::::::::::::::::::::::::::::
@@ -111,6 +114,7 @@ def contact():
 def logout():
     session.pop('logname', None)
     session.pop('email', None)
+    session.pop('key',None)
     return(redirect(url_for('home')))
 
 #:::::::::::::::::::::::::::::::::::::::::::::users pages:::::::::::::::::::::::::::::::
@@ -152,6 +156,7 @@ def login():
                 data=cur.fetchone()
                 session['email']=useremail
                 session['logname']=data[2]
+                session['key']="user"
 
                 flash('Loged in','success')
                 return redirect(url_for('userdash'))
@@ -347,18 +352,24 @@ def dlr():
 #:::::::::::::::::::::::::::::::::::::::::::employee:::::::::::::::::::::::::::::::::::::::::
 @app.route('/empdashboard')
 def empdash():
+
     return render_template("empdashboard.html")
 
 @app.route('/emplogin',methods=['POST','GET'])
 def emplogin():
-    form=mylogform(request.form)
+    form=emplogform(request.form)
     if request.method=='POST' and form.validate():
         empemail=form.email.data
         emppassword=form.password.data
+        secretkey=form.secretkey.data
         with sqlite3.connect('r.db') as con:
             cur=con.cursor()
-            if(cur.execute("SELECT email,password FROM admin WHERE email=? and password=?",(empemail,emppassword))):
+            if(cur.execute("SELECT * FROM admin WHERE email=? and password=? and secretkey=?",(empemail,emppassword,secretkey))):
                 flash('Logged in','success')
+                data=cur.fetchone()
+                session['email']=data[0]
+                session['logname']=data[3]
+                session['key']="admin"
                 return redirect(url_for('empdash'))
             else:
                 flash("please contact admin for registration")
@@ -366,7 +377,70 @@ def emplogin():
                 
 
     return render_template("emplogin.html",form=form)
+@app.route('/adminllr',methods=['GET','POST'])
+def adminllr():
+       
 
+    with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            if(cur.execute("SELECT firstname,email,age,city,gender,currentdate,type FROM llr WHERE status=?",("pending",))):
+                data=cur.fetchall()
+                return render_template('adminllr.html',data=data)
+            else:
+                flash("error")
+                return render_template('empdashboard.html')
+
+   
+@app.route('/admindlr',methods=['GET','POST'])
+def admindlr():
+
+    return render_template('admindlr.html')
+@app.route('/adminregv',methods=['GET','POST'])
+def adminregv():
+    return render_template('adminregv.html')
+@app.route('/aadhar/<email>',methods=['GET','POST'])
+def getaadhar(email):
+    user=mongo.db.users.find_one({'email':email})
+    filename=user['aadharpdf']
+    return mongo.send_file(filename)
+
+@app.route('/voterid/<email>',methods=['GET','POST'])
+def getvoterid(email):
+    user=mongo.db.users.find_one({'email':email})
+    filename=user['voterid']
+    return mongo.send_file(filename)
+@app.route('/sslc/<email>',methods=['GET','POST'])
+def getsslc(email):
+    user=mongo.db.users.find_one({'email':email})
+    filename=user['sslcpdf']
+    return mongo.send_file(filename)
+@app.route('/details/<email>',methods=['GET','POST'])
+def getdetails(email):
+    with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            cur.execute("SELECT * FROM llr WHERE email=?",(email,))
+            data=cur.fetchone()       
+    rendered=render_template("llrform.html",data=data)
+    pdf=pdfkit.from_string(rendered,False)
+    response=make_response(pdf)
+    response.headers['Content-Type']='application/pdf'
+    response.headers['Content-Disposition']='attachment; filename=llr.pdf' #downloadable file 
+    return response
+
+@app.route('/edit/<email>',methods=['GET','POST'])
+def updatedatabase(email):
+     feedback=request.form.get('feedback')
+     with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            
+            if request.form['action'] == "accept":
+                cur.execute("UPDATE llr SET status=?,feedback=? WHERE email=?",("accepted",feedback,email))
+                con.commit()
+                return redirect(url_for('adminllr'))
+            else:
+                cur.execute("UPDATE llr SET status=? WHERE email=?",("rejected",email))
+                con.commit()
+                return redirect(url_for('adminllr'))
 
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

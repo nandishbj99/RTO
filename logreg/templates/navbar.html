@@ -1,7 +1,7 @@
 <div class="wrapper">
   <!-- Sidebar  -->
   
-  <nav id="sidebar">
+  <nav id="sidebar" class="active">
       <div class="sidebar-header">
           <h3><a href="/">RTO Database</a></h3>
       </div>
@@ -10,27 +10,33 @@
           <p>Choose An Option</p>
           {% if session.get("email", None) == None %}
           <li class="active">
-              <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Log In</a>
+              <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-sign-in">    Log In</i></a>
               <ul class="collapse list-unstyled" id="homeSubmenu">
                   <li>
-                      <a href="/login">User Login</a>
+                      <a href="/login"><i class="fa fa-user-circle">   User Login</i></a>
                   </li>
                   <li>
-                      <a href="/emplogin">Employee Login</a>
+                      <a href="/emplogin"><i class="fa fa-user-secret">  Employee Login</i></a>
                   </li>
               
               </ul>
           </li>
           {% else %}
+          {% if session.get("key",None) == user %}
           <li>
              <a href="/userdashboard"> {{ session.get('logname') }} </a>
           </li>
+          {%else%}
           <li>
-              <a href="/logout">logout</a>
+            <a href="/empdashboard"> {{ session.get('logname') }} </a>
+         </li>
+         {% endif %}
+          <li>
+              <a href="/logout"><i class="fa fa-sign-out">  logout</i></a>
           </li>
           {% endif %}
           <li>
-              <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Brochure</a>
+              <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-book">   Brochure</i></a>
               <ul class="collapse list-unstyled" id="pageSubmenu">
                   <li>
                       <a href="#">Road Safety</a>
@@ -44,11 +50,11 @@
               </ul>
           </li>
           <li>
-              <a href="/about">About</a>
+              <a href="/about"><i class="fa fa-info-circle">    About</i></a>
           </li>
           
           <li>
-              <a href="/contact">Contact Us</a>
+              <a href="/contact"><i class="fa fa-phone"></i>  Contact Us</a>
           </li>
       </ul>
 
@@ -62,7 +68,7 @@
           <div class="container-fluid">
 
               <button type="button" id="sidebarCollapse" class="btn text-sidebar bg-turbo-yellow" color="black">
-                  <i class="fas fa-align-left"><></i>
+                  <i class="fa fa-bars"></i>
                   <span></span>
               </button>
               <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" ;>
@@ -86,7 +92,7 @@
           </div>
       </nav>
 
-
+     
 
       <style>
         $turbo-yellow: #ffcc19;

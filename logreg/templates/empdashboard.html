@@ -1,11 +1,23 @@
 {% extends "layout.html" %}
 {% block body %}
+{% for mes in get_flashed_messages() %}
+<div class="alert" role="alert">{{mes}}</div>
+{% endfor %}
 <div class="page-wrap">
 <center>
-        Admin Dashboard
-        
+<div class="jumbotron pl-4 pt-4">
+<div class="container">
+        employee Dashboard</br>
+        <h1>
+        Welcome, {{session.get('logname')}}
+</div>
+</div>
 </center>
 <br><br><br>
+
+<a href="/adminllr">LLR requests</a><br>
+<a href="/admindlr">DLR requests</a><br>
+<a href="/adminregv">Vehicles registration requests</a><br>
 
 
 
