@@ -67,7 +67,7 @@ class regvehi(Form):
     manufacture = StringField('manufacturer')
     modelname = StringField('model_name')
     manufacturedate = StringField('manufacturedate')
-    fuel = SelectField('Fuel',choices = [('petrol','PEETROL'),('diesel','DIESEL'),('lpg','LPG / DIE'),('electric','ELECTRIC'),('solor','SOLOR')])
+    fuel = SelectField('Fuel',choices = [('petrol','PETROL'),('diesel','DIESEL'),('lpg','LPG / DIE'),('electric','ELECTRIC'),('solor','SOLOR')])
     color = StringField('color')
     insurencecompany = StringField('Insurance Company')
     datefrom = StringField('From')
@@ -285,10 +285,15 @@ def regv():
                     cur=con.cursor()
                     cur.execute("INSERT INTO vehicle VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(firstname,lastname,fathersname,email,address,enginenumber,ownership,vetype,vclass,purchasedate,manufacture,modelname,manufacturedate,fuel,color,insurencecompany,datefrom,dateto,insurancenumber,0))
                     cur.commit()
+                    
+                    
                     mongo.save_file(pic1.filename,pic1)
-                    mongo.save_file(pic2.filename,pic3)
-                    mongo.save_file(pic3.filename,pic2)
-                    mongo.db.vehicles.insert({'email':email,'pic1':pic1.filename,'pic2':pic2.filename,'pic2':pic2.filename})
+                    mongo.save_file(pic2.filename,pic2)
+                    mongo.save_file(pic3.filename,pic3)
+                    mongo.db.vehicles.insert({'email':email,'pic1':pic1.filename,'pic2':pic2.filename,'pic3':pic3.filename})
+                    flash("Succesfull Registered")
+                    
+                    
                 except:
                     print("error")
                 
@@ -380,7 +385,7 @@ def emplogin():
 
 
 
-    #####EMP LLR
+#######################################EMP LLR##############################################33333
 @app.route('/adminllr',methods=['GET','POST'])
 def adminllr():
     with sqlite3.connect('r.db') as con:
@@ -447,6 +452,8 @@ def updatellrdatabase(email):
                 con.commit()
                 return redirect(url_for('adminllr'))
 
+
+########################################## EMP DLR ############################################
 @app.route('/admindlr',methods=['GET','POST'])
 def admindlr():
      with sqlite3.connect('r.db') as con:
