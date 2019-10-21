@@ -451,7 +451,7 @@ def updatellrdatabase(email):
 def admindlr():
      with sqlite3.connect('r.db') as con:
             cur=con.cursor()
-            if(cur.execute("select firstname,email,age,city,gender,currentdate,type from llr where email in(select email from dlr where status = "pending")):
+            if(cur.execute("select firstname,email,age,city,gender,currentdate,type from llr where email in(select email from dlr where status = ?)",("pending",))):
                 data=cur.fetchall()
                 return render_template('admindlr.html',data=data)
             else:
