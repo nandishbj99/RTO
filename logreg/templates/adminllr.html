@@ -2,11 +2,14 @@
 {% block body %}
 
 <center><h4><b>LLR Requests</b></h4></center>
+{%if data%}
 <div class="container">
     <div class="row">
 <div class="col-md-8">
-       
-    <table>
+        
+    <table> 
+        
+    
         <tr>
             <th>Name:</th>
             <th>age:</th>
@@ -25,7 +28,7 @@
        
         {% for row in data %}
         <form method=post  action="/edit/{{ row[1] }}">
-        <tr>
+        <tr>    
             <td>{{row[0]}}</td>
             <td>{{row[2]}}</td>
             <td>{{row[3]}}</td>
@@ -42,11 +45,20 @@
             <td><input type="submit" name="action" class="btn-warning" value="reject"></td>
 
         </tr>
+    </form>
 {% endfor %}
     </table>
-    </form>
+
+    
 </div>
 
 
 </div>
+{%else%}
+<center>
+    <br><br>
+    <p> No requests for LLR</p>
+</center>
+        {%endif%}
+    
 {% endblock%}

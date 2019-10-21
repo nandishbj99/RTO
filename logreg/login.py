@@ -377,10 +377,12 @@ def emplogin():
                 
 
     return render_template("emplogin.html",form=form)
+
+
+
+    #####EMP LLR
 @app.route('/adminllr',methods=['GET','POST'])
 def adminllr():
-       
-
     with sqlite3.connect('r.db') as con:
             cur=con.cursor()
             if(cur.execute("SELECT firstname,email,age,city,gender,currentdate,type FROM llr WHERE status=?",("pending",))):
@@ -391,36 +393,39 @@ def adminllr():
                 return render_template('empdashboard.html')
 
    
-@app.route('/admindlr',methods=['GET','POST'])
-def admindlr():
 
-    return render_template('admindlr.html')
 @app.route('/adminregv',methods=['GET','POST'])
 def adminregv():
     return render_template('adminregv.html')
+
+
 @app.route('/aadhar/<email>',methods=['GET','POST'])
 def getaadhar(email):
     user=mongo.db.users.find_one({'email':email})
     filename=user['aadharpdf']
     return mongo.send_file(filename)
 
+
 @app.route('/voterid/<email>',methods=['GET','POST'])
 def getvoterid(email):
     user=mongo.db.users.find_one({'email':email})
     filename=user['voterid']
     return mongo.send_file(filename)
+
+
 @app.route('/sslc/<email>',methods=['GET','POST'])
 def getsslc(email):
     user=mongo.db.users.find_one({'email':email})
     filename=user['sslcpdf']
     return mongo.send_file(filename)
+
 @app.route('/details/<email>',methods=['GET','POST'])
 def getdetails(email):
     with sqlite3.connect('r.db') as con:
             cur=con.cursor()
             cur.execute("SELECT * FROM llr WHERE email=?",(email,))
             data=cur.fetchone()       
-    rendered=render_template("llrform.html",data=data)
+    rendered=render_template("adminllrform.html",data=data)
     pdf=pdfkit.from_string(rendered,False)
     response=make_response(pdf)
     response.headers['Content-Type']='application/pdf'
@@ -428,7 +433,7 @@ def getdetails(email):
     return response
 
 @app.route('/edit/<email>',methods=['GET','POST'])
-def updatedatabase(email):
+def updatellrdatabase(email):
      feedback=request.form.get('feedback')
      with sqlite3.connect('r.db') as con:
             cur=con.cursor()
@@ -438,9 +443,36 @@ def updatedatabase(email):
                 con.commit()
                 return redirect(url_for('adminllr'))
             else:
-                cur.execute("UPDATE llr SET status=? WHERE email=?",("rejected",email))
+                cur.execute("UPDATE llr SET status=?,feedback=? WHERE email=?",("rejected",feedback,email))
                 con.commit()
                 return redirect(url_for('adminllr'))
+
+@app.route('/admindlr',methods=['GET','POST'])
+def admindlr():
+     with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            if(cur.execute("select firstname,email,age,city,gender,currentdate,type from llr where email in(select email from dlr where status = "pending")):
+                data=cur.fetchall()
+                return render_template('admindlr.html',data=data)
+            else:
+                flash("error")
+                return render_template('empdashboard.html')
+
+     return render_template('admindlr.html')
+@app.route('/dlredit/<email>',methods=['GET','POST'])
+def updatedatabase(email):
+     feedback=request.form.get('feedback')
+     with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            
+            if request.form['action'] == "accept":
+                cur.execute("UPDATE dlr SET status=?,feedback=? WHERE email=?",("accepted",feedback,email))
+                con.commit()
+                return redirect(url_for('admindlr'))
+            else:
+                cur.execute("UPDATE dlr SET status=?,feedback=? WHERE email=?",("rejected",feedback,email))
+                con.commit()
+                return redirect(url_for('admindlr'))
 
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -450,17 +482,17 @@ def updatedatabase(email):
 #class uploadADHAR(Form):
   ##  file = FileField()
     #submit = SubmitField("Submit")
-'''class uploadllr(Form):
+"""class uploadllr(Form):
     file1 = FileField(validators=[FileRequired()])
     submit = SubmitField("Submit")
     file2 = FileField(validators=[FileRequired()])
     submit2 = SubmitField("Submit")
     file3 = FileField(validators=[FileRequired()])
     submit3 = SubmitField("Submit")
-    check = BooleanField("Consent")'''
+    check = BooleanField("Consent")
 
 
-"""def llrdb(name,file1,file2,file3):
+def llrdb(name,file1,file2,file3):
         with sqlite3.connect('r.db') as con:
         cursor=con.cursor()
         #cursor.execute("" CREATE table llr(uname TEXT,file1 BLOB,file2 BLOB,file3 BLOB)"")
@@ -469,12 +501,12 @@ def updatedatabase(email):
         except:
             print("ERROR")
         con.commit()
-        cursor.close()"""
+        cursor.close()
 
         
 
 
-"""def llrdb(file):
+def llrdb(file):
     with sqlite3.connect('r.db') as con:
         cursor=con.cursor()
         try:
@@ -486,21 +518,21 @@ def updatedatabase(email):
         except:
             print("ERROR2")
         con.commit()
-        cursor.close()"""
+        cursor.close()
 
 
-"""def convertToBinaryData(filename):
+def convertToBinaryData(filename):
     #Convert digital data to binary format
     with open(filename, 'rb') as file:
         blobData = file.read()
-    return blobData"""
+    return blobData
 
 
 
     
 
     
-"""form=uploadllr(request.form)
+form=uploadllr(request.form)
         print("booo")
         if request.method=='POST' and form.validate(): #NOT GOING....
         print("YOO")  #FIX THIS
@@ -508,5 +540,7 @@ def updatedatabase(email):
         print("ERROR !")
         return "Request Submitted
     return render_template("applyllr.html")"""
+
+   
 if(__name__=="__main__"):
     app.run(debug=True)

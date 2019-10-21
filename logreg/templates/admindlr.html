@@ -1,7 +1,8 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<center><h4><b>LLR Requests</b></h4></center>
+<center><h4><b>DLR Requests</b></h4></center>
+{%if data%}
 <div class="container">
     <div class="row">
 <div class="col-md-8">
@@ -49,4 +50,10 @@
 
 
 </div>
+{%else%}
+<center>
+    <br><br>
+    <p> No requests for DLR</p>
+</center>
+        {%endif%}
 {% endblock%}
