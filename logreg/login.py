@@ -6,7 +6,7 @@ import os
 import pdfkit
 from datetime import date,timedelta
 from flask_wtf.file import FileField, FileRequired
-
+import random
 from flask_pymongo import PyMongo
 app=Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/rto"
@@ -275,6 +275,7 @@ def regv():
             datefrom = form.datefrom.data
             dateto = form.dateto.data
             insurancenumber = form.insurancenumber.data
+            pending = "pending"
             #PHOTOS 
             sideview = request.files["sideview"]
             frontview = request.files["frontview"]
@@ -282,14 +283,14 @@ def regv():
             mongo.save_file(sideview.filename,sideview)
             mongo.save_file(frontview.filename,frontview)              
             mongo.save_file(backview.filename,backview)
-            mongo.db.vehicles.insert({'email':email,'sideview':sideview.filename,'frontview':frontview.filename,'backview':backview.filename})
+            mongo.db.vehicles.insert({'email':email,'enginenumber':enginenumber,'sideview':sideview.filename,'frontview':frontview.filename,'backview':backview.filename})
                     
                     
 
             with sqlite3.connect('r.db') as con:
                 try:
                     cur=con.cursor()
-                    cur.execute("INSERT INTO vehicle VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(firstname,lastname,fathersname,email,address,enginenumber,ownership,vetype,vclass,purchasedate,manufacture,modelname,manufacturedate,fuel,color,insurencecompany,datefrom,dateto,insurancenumber,0))
+                    cur.execute("INSERT INTO vehicle VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(firstname,lastname,fathersname,email,address,enginenumber,ownership,vetype,vclass,purchasedate,manufacture,modelname,manufacturedate,fuel,color,insurencecompany,datefrom,dateto,insurancenumber,pending))
                     cur.commit()
                    
                 except:
@@ -304,8 +305,8 @@ def regv():
 
 @app.route('/status')
 def status():
-    with sqlite3.connect('r.db') as con:
-            cur=con.cursor()
+    with sqlite3.connectdave('r.db') as con:
+            cur=con.cursdaveor()
             cur.execute("SELECT status FROM llr WHERE email = ?",(session.get('email'),))
             st=cur.fetchone()
             if st[0] == "pending":
@@ -478,11 +479,13 @@ def updatedatabase(email):
                 return redirect(url_for('admindlr'))
 
 ########################################EMP REGV####################################################
+
+
 @app.route('/adminregv',methods=['GET','POST'])
 def adminregv():
     with sqlite3.connect('r.db') as con:
             cur=con.cursor()
-            if(cur.execute("SELECT firstname,lastname,email FROM vehicle WHERE status=?",("pending",))):
+            if(cur.execute("SELECT * FROM vehicle WHERE status=?",("pending",))):
                 data=cur.fetchall()
                 return render_template('adminregv.html',data=data)
             else:
@@ -492,27 +495,27 @@ def adminregv():
     return render_template('adminregv.html')
 
 
-@app.route('/frontview/<email>',methods=['GET','POST'])
-def getfront(email):
-    user=mongo.db.vehicles.find_one({'email':email})
+@app.route('/frontview/<enginenumber>',methods=['GET','POST'])
+def getfront(enginenumber):
+    user=mongo.db.vehicles.find_one({'enginenumber':enginenumber})
     filename=user['frontview']
     return mongo.send_file(filename)
-@app.route('/sideview/<email>',methods=['GET','POST'])
-def getside(email):
-    user=mongo.db.vehicles.find_one({'email':email})
+@app.route('/sideview/<enginenumber>',methods=['GET','POST'])
+def getside(enginenumber):
+    user=mongo.db.vehicles.find_one({'enginenumber':enginenumber})
     filename=user['sideview']
     return mongo.send_file(filename)
-@app.route('/backview/<email>',methods=['GET','POST'])
-def getback(email):
-    user=mongo.db.vehicles.find_one({'email':email})
+@app.route('/backview/<enginenumber>',methods=['GET','POST'])
+def getback(enginenumber):
+    user=mongo.db.vehicles.find_one({'enginenumber':enginenumber})
     filename=user['backview']
     return mongo.send_file(filename)
 
-@app.route('/vehicledetails/<email>',methods=['GET','POST'])
-def getvdetails(email):
+@app.route('/vehicledetails/<enginenumber>',methods=['GET','POST'])
+def getvdetails(enginenumber):
     with sqlite3.connect('r.db') as con:
             cur=con.cursor()
-            cur.execute("SELECT * FROM vehicles WHERE email=?",(email,))
+            cur.execute("SELECT * FROM vehicle WHERE enginenumber=?",(enginenumber,))
             data=cur.fetchone()       
     rendered=render_template("adminvrform.html",data=data)
     pdf=pdfkit.from_string(rendered,False)
@@ -520,7 +523,22 @@ def getvdetails(email):
     response.headers['Content-Type']='application/pdf'
     response.headers['Content-Disposition']='attachment; filename=vr.pdf' #downloadable file 
     return response
-
+@app.route('/vredit/<enginenumber>',methods=['GET','POST'])
+def updatevdatabase(enginenumber):
+     zero = "0000"
+     vno =  random.randint(1000,9999)
+     feedback=request.form.get('feedback')
+     with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            
+            if request.form['action'] == "accept":
+                cur.execute("UPDATE vehicle SET status=?,vehiclenumber=? WHERE enginenumber=?",("accepted",vno,email,enginenumber))
+                con.commit()
+                return redirect(url_for('adminregv'))
+            else:
+                cur.execute("UPDATE vehicle SET status=?,vehiclenumber=? WHERE enginenumber=?",("rejected",zero,email,enginenumber))
+                con.commit()
+                return redirect(url_for('adminregv'))
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #class uploadSSLC(Form):
