@@ -50,7 +50,35 @@ class llr_user(Form):
     gender=SelectField('gender',choices=[('male','male'),('female','female')])
     phone=IntegerField('Phone')
     blood_group=StringField('Blood_Group',[validators.DataRequired()])
-    typee=SelectField('typee',choices=[('lmv','LWM'),('mcwg','MCWG'),('both','LMV + MCWG')])
+    with sqlite3.connect('r.db') as con:
+            try:
+                cur=con.cursor()
+                if(cur.execute("SELECT type FROM llr WHERE email=?",(session.get('email'),))):
+                    t=cur.fetchone()
+                    if(t[0]=="lmv"):
+                        typee=SelectField('typee',choices=[('mcwg','MCWG'),('tractor','TRACTOR'),('tractor:mcwg','TRACTOR+MCWG')])
+                    elif(t[0]=="mcwg"):
+                        typee=SelectField('typee',choices=[('lmv','LMW'),('tractor','TRACTOR'),('tractor:lmv','TRACTOR+LMV')])
+                    elif(t[0]=="tractor"):
+                        typee=SelectField('typee',choices=[('lmv','LMW'),('mcwg','MCWG'),('lmv:mcwg','LMV + MCWG')])
+                    elif(t[0]=="lmv:mcwg"):
+                        typee=SelectField('typee',choices=[('tractor','TRACTOR')])
+                    elif(t[0]=="tractor:lmv"):
+                        typee=SelectField('typee',choices=[('mcwg','MCWG')])
+                    elif(t[0]=="tractor:mcwg"):
+                        typee=SelectField('typee',choices=[('lmv','LMV')])
+                    elif(t[0]=="lmv:tractor:mcwg"):
+                        typee=SelectField('typee',choices=[('none','NONE')])
+                else:
+                    print("new user")
+                    typee=SelectField('typee',choices=[('lmv','LMW'),('mcwg','MCWG'),('tractor','TRACTOR'),('lmv:mcwg','LMV + MCWG'),('tractor:lmv','TRACTOR+LMV'),('tractor:mcwg','TRACTOR+MCWG'),('lmv:tractor:mcwg','LMV+MCWG+TRACTOR')])
+
+            except:
+                print("errpr")
+                typee=SelectField('typee',choices=[('lmv','LMW'),('mcwg','MCWG'),('tractor','TRACTOR'),('lmv:mcwg','LMV + MCWG'),('tractor:lmv','TRACTOR+LMV'),('tractor:mcwg','TRACTOR+MCWG'),('lmv:tractor:mcwg','LMV+MCWG+TRACTOR')])
+                
+            
+    
     rtooffice=SelectField(choices=ChoicesByDb(),label="rtooffice")
     
 class regvehi(Form):
@@ -237,8 +265,23 @@ def llrapply():
                 
         return redirect(url_for('userdash'))
     else:
+         with sqlite3.connect('r.db') as con:
+            try:
+                cur=con.cursor()
+                if(cur.execute("SELECT type FROM llr WHERE email=?",(session.get('email'),))):
+                    t=cur.fetchone()
+                    if(t[0]=="lmv:tractor:mcwg"):
+                        flash("you already registered for all type of licences")
+                        return redirect(url_for('userdash'))
+                    else:
+                        return render_template("appllr.html",form=form)
+                else:
+                    return render_template("appllr.html",form=form)
+            except:
+                return render_template("appllr.html",form=form)
+
         
-        return render_template("appllr.html",form=form)
+        
 
 #toshow pdff files
 @app.route('/showpdf',methods=['GET','POST'])
