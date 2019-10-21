@@ -276,26 +276,26 @@ def regv():
             dateto = form.dateto.data
             insurancenumber = form.insurancenumber.data
             #PHOTOS 
-            pic1 = request.files["Picture1"]
-            pic2 = request.files["Picture2"]
-            pic3 = request.files["Picture3"]
+            sideview = request.files["sideview"]
+            frontview = request.files["frontview"]
+            backview = request.files["backview"]
+            mongo.save_file(sideview.filename,sideview)
+            mongo.save_file(frontview.filename,frontview)
+                
+            mongo.save_file(backview.filename,backview)
+            mongo.db.vehicles.insert({'email':email,'sideview':sideview.filename,'frontview':frontview.filename,'backview':backview.filename})
+                    
+                    
 
             with sqlite3.connect('r.db') as con:
                 try:
                     cur=con.cursor()
                     cur.execute("INSERT INTO vehicle VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(firstname,lastname,fathersname,email,address,enginenumber,ownership,vetype,vclass,purchasedate,manufacture,modelname,manufacturedate,fuel,color,insurencecompany,datefrom,dateto,insurancenumber,0))
                     cur.commit()
-                    
-                    
-                    mongo.save_file(pic1.filename,pic1)
-                    mongo.save_file(pic2.filename,pic2)
-                    mongo.save_file(pic3.filename,pic3)
-                    mongo.db.vehicles.insert({'email':email,'pic1':pic1.filename,'pic2':pic2.filename,'pic3':pic3.filename})
-                    flash("Succesfull Registered")
-                    
-                    
+                   
                 except:
                     print("error")
+                    flash("success reg")
                 
             return redirect(url_for('userdash'))
             flash("Registerd Successfully")
