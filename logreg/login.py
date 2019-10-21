@@ -397,9 +397,7 @@ def adminllr():
 
    
 
-@app.route('/adminregv',methods=['GET','POST'])
-def adminregv():
-    return render_template('adminregv.html')
+
 
 
 @app.route('/aadhar/<email>',methods=['GET','POST'])
@@ -478,6 +476,50 @@ def updatedatabase(email):
                 cur.execute("UPDATE dlr SET status=?,feedback=? WHERE email=?",("rejected",feedback,email))
                 con.commit()
                 return redirect(url_for('admindlr'))
+
+########################################EMP REGV####################################################
+@app.route('/adminregv',methods=['GET','POST'])
+def adminregv():
+    with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            if(cur.execute("SELECT firstname,lastname,email FROM vehicle WHERE status=?",("pending",))):
+                data=cur.fetchall()
+                return render_template('adminregv.html',data=data)
+            else:
+                flash("error")
+                return render_template('empdashboard.html')
+
+    return render_template('adminregv.html')
+
+
+@app.route('/frontview/<email>',methods=['GET','POST'])
+def getfront(email):
+    user=mongo.db.vehicles.find_one({'email':email})
+    filename=user['frontview']
+    return mongo.send_file(filename)
+@app.route('/sideview/<email>',methods=['GET','POST'])
+def getside(email):
+    user=mongo.db.users.find_one({'email':email})
+    filename=user['sideview']
+    return mongo.send_file(filename)
+@app.route('/backview/<email>',methods=['GET','POST'])
+def getback(email):
+    user=mongo.db.users.find_one({'email':email})
+    filename=user['backview']
+    return mongo.send_file(filename)
+
+@app.route('/vehicledetails/<email>',methods=['GET','POST'])
+def getvdetails(email):
+    with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            cur.execute("SELECT * FROM vehicles WHERE email=?",(email,))
+            data=cur.fetchone()       
+    rendered=render_template("adminvrform.html",data=data)
+    pdf=pdfkit.from_string(rendered,False)
+    response=make_response(pdf)
+    response.headers['Content-Type']='application/pdf'
+    response.headers['Content-Disposition']='attachment; filename=vr.pdf' #downloadable file 
+    return response
 
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
