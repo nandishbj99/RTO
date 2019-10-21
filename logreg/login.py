@@ -290,7 +290,7 @@ def regv():
             with sqlite3.connect('r.db') as con:
                 try:
                     cur=con.cursor()
-                    cur.execute("INSERT INTO vehicle VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(firstname,lastname,fathersname,email,address,enginenumber,ownership,vetype,vclass,purchasedate,manufacture,modelname,manufacturedate,fuel,color,insurencecompany,datefrom,dateto,insurancenumber,pending))
+                    cur.execute("INSERT INTO vehicle(firstname,lastname,fathersname,email,address,enginenumber,ownership,vetype,vclass,purchasedate,manufacture,modelname,manufacturedate,fuel,color,insurencecompany,datefrom,dateto,insurancenumber,status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(firstname,lastname,fathersname,email,address,enginenumber,ownership,vetype,vclass,purchasedate,manufacture,modelname,manufacturedate,fuel,color,insurencecompany,datefrom,dateto,insurancenumber,pending))
                     cur.commit()
                    
                 except:
@@ -523,6 +523,7 @@ def getvdetails(enginenumber):
     response.headers['Content-Type']='application/pdf'
     response.headers['Content-Disposition']='attachment; filename=vr.pdf' #downloadable file 
     return response
+
 @app.route('/vredit/<enginenumber>',methods=['GET','POST'])
 def updatevdatabase(enginenumber):
      zero = "0000"
@@ -532,11 +533,11 @@ def updatevdatabase(enginenumber):
             cur=con.cursor()
             
             if request.form['action'] == "accept":
-                cur.execute("UPDATE vehicle SET status=?,vehiclenumber=? WHERE enginenumber=?",("accepted",vno,email,enginenumber))
+                cur.execute("UPDATE vehicle SET status=?,vehiclenumber=? WHERE enginenumber=?",("accepted",vno,enginenumber))
                 con.commit()
                 return redirect(url_for('adminregv'))
             else:
-                cur.execute("UPDATE vehicle SET status=?,vehiclenumber=? WHERE enginenumber=?",("rejected",zero,email,enginenumber))
+                cur.execute("UPDATE vehicle SET status=?,vehiclenumber=? WHERE enginenumber=?",("rejected",zero,enginenumber))
                 con.commit()
                 return redirect(url_for('adminregv'))
 
