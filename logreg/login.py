@@ -280,8 +280,7 @@ def regv():
             frontview = request.files["frontview"]
             backview = request.files["backview"]
             mongo.save_file(sideview.filename,sideview)
-            mongo.save_file(frontview.filename,frontview)
-                
+            mongo.save_file(frontview.filename,frontview)              
             mongo.save_file(backview.filename,backview)
             mongo.db.vehicles.insert({'email':email,'sideview':sideview.filename,'frontview':frontview.filename,'backview':backview.filename})
                     
@@ -294,8 +293,7 @@ def regv():
                     cur.commit()
                    
                 except:
-                    print("error")
-                    flash("success reg")
+                    flash("Successfull Registered")
                 
             return redirect(url_for('userdash'))
             flash("Registerd Successfully")
