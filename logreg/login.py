@@ -499,12 +499,12 @@ def getfront(email):
     return mongo.send_file(filename)
 @app.route('/sideview/<email>',methods=['GET','POST'])
 def getside(email):
-    user=mongo.db.users.find_one({'email':email})
+    user=mongo.db.vehicles.find_one({'email':email})
     filename=user['sideview']
     return mongo.send_file(filename)
 @app.route('/backview/<email>',methods=['GET','POST'])
 def getback(email):
-    user=mongo.db.users.find_one({'email':email})
+    user=mongo.db.vehicles.find_one({'email':email})
     filename=user['backview']
     return mongo.send_file(filename)
 
