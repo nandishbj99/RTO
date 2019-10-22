@@ -382,7 +382,7 @@ def dlr():
 
 @app.route('/dlllr')
 def dlllr():
-    acc = "accepted"
+    acc = "accept"
     with sqlite3.connect('r.db') as con:
             cur=con.cursor()
             email=session.get('email')
