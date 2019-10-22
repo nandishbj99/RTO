@@ -352,20 +352,48 @@ def dlr():
 
 @app.route('/dlllr')
 def dlllr():
+    acc = "accepted"
+    with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            email=session.get('email')
+            cur.execute("SELECT * FROM llr WHERE email=? AND status=?",(email,acc))
+            data=cur.fetchone()
+            if data:       
+                rendered=render_template("llrform.html",data=data)
+                pdf=pdfkit.from_string(rendered,False)
+                response=make_response(pdf)
+                response.headers['Content-Type']='application/pdf'
+                response.headers['Content-Disposition']='attachment; filename=llr.pdf' #downloadable file 
+                return response 
+            else:
+                flash("No LLR Found")
+
+    return render_template("userdashboard.html")
+
+@app.route('/dldlr')
+def dldlr():
     with sqlite3.connect('r.db') as con:
             cur=con.cursor()
             email=session.get('email')
             cur.execute("SELECT * FROM llr WHERE email=?",(email,))
-            data=cur.fetchone()       
-    rendered=render_template("llrform.html",data=data)
-    pdf=pdfkit.from_string(rendered,False)
-    response=make_response(pdf)
-    response.headers['Content-Type']='application/pdf'
-    response.headers['Content-Disposition']='attachment; filename=llr.pdf' #downloadable file 
-    return response 
+            data=cur.fetchone() 
+            cur.execute("SELECT * FROM dlr WHERE email=?",(email,))
+            data1=cur.fetchone()
+            try:
+                if data1[3] == "accepted":     
+                    rendered=render_template("dlrform.html",data=data)
+                    pdf=pdfkit.from_string(rendered,False)
+                    response=make_response(pdf)
+                    response.headers['Content-Type']='application/pdf'
+                    response.headers['Content-Disposition']='attachment; filename=dlr.pdf' #downloadable file 
+                    return response
+                else:
+                    flash("No Drivers Licence Found")
+            except:
+                flash("No Drivers Licence Found")
+
 
     return render_template("userdashboard.html")
-
 
 
 @app.route('/dlvr',methods = ["POST","GET"])
