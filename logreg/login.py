@@ -85,7 +85,7 @@ class emplogform(Form):
     password=PasswordField('password',[validators.DataRequired()])
     secretkey=PasswordField('secretkey',[validators.DataRequired()])
 class vrdl(Form):
-    enginenumber=TextField('Engine Number',[validators.Length(10)])
+    enginenumber=TextField('Engine Number',[validators.Length(min=10,max=10)])
     
 
 #:::::::::::::::::::::::::::::::::entry main pages::::::::::::::::::::::::::::::::::::::
@@ -371,18 +371,25 @@ def dlllr():
 @app.route('/dlvr',methods = ["POST","GET"])
 def dlvr():
     form=vrdl(request.form)
+    
     if request.method=='POST' and form.validate():
+        email = session.get('email')
+        acc = "accepted"
         enginenumber=form.enginenumber.data
         with sqlite3.connect('r.db') as con:
             cur=con.cursor()
-            cur.execute("SELECT * FROM vehicle WHERE enginenumber=?",(enginenumber,))
+            cur.execute("SELECT * FROM vehicle WHERE enginenumber=? AND email =? AND status=?",(enginenumber,email,acc)) 
             data=cur.fetchone()
-            rendered=render_template("vrdform.html",data=data)
-            pdf=pdfkit.from_string(rendered,False)
-            response=make_response(pdf)
-            response.headers['Content-Type']='application/pdf'
-            response.headers['Content-Disposition']='attachment; filename=vr.pdf' #downloadable file 
-            return response  
+            if data:
+                rendered=render_template("vrdform.html",data=data)
+                pdf=pdfkit.from_string(rendered,False)
+                response=make_response(pdf)
+                response.headers['Content-Type']='application/pdf'
+                response.headers['Content-Disposition']='attachment; filename=vr.pdf' #downloadable file 
+                return response                 
+            else:
+                flash("ERROR : Check Whether You Have Entered Valid ENGINE NUMBER and You have Registered Your vehicle")
+                print("CAME HERRE")
     return render_template("vdocdl.html")
     
                    
