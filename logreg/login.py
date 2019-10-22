@@ -50,35 +50,6 @@ class llr_user(Form):
     gender=SelectField('gender',choices=[('male','male'),('female','female')])
     phone=IntegerField('Phone')
     blood_group=StringField('Blood_Group',[validators.DataRequired()])
-    with sqlite3.connect('r.db') as con:
-            try:
-                cur=con.cursor()
-                if(cur.execute("SELECT type FROM llr WHERE email=?",(session.get('email'),))!="None"):
-                    t=cur.fetchone()
-                    if(t[0]=="lmv"):
-                        typee=SelectField('typee',choices=[('mcwg','MCWG'),('tractor','TRACTOR'),('tractor:mcwg','TRACTOR+MCWG')])
-                    elif(t[0]=="mcwg"):
-                        typee=SelectField('typee',choices=[('lmv','LMV'),('tractor','TRACTOR'),('tractor:lmv','TRACTOR+LMV')])
-                    elif(t[0]=="tractor"):
-                        typee=SelectField('typee',choices=[('lmv','LMV'),('mcwg','MCWG'),('lmv:mcwg','LMV + MCWG')])
-                    elif(t[0]=="lmv:mcwg"):
-                        typee=SelectField('typee',choices=[('tractor','TRACTOR')])
-                    elif(t[0]=="tractor:lmv"):
-                        typee=SelectField('typee',choices=[('mcwg','MCWG')])
-                    elif(t[0]=="tractor:mcwg"):
-                        typee=SelectField('typee',choices=[('lmv','LMV')])
-                    elif(t[0]=="lmv:tractor:mcwg"):
-                        typee=SelectField('typee',choices=[('none','NONE')])
-                else:
-                    print("error")
-                    typee=SelectField('typee',choices=[('lmv','LMV'),('mcwg','MCWG'),('tractor','TRACTOR'),('lmv:mcwg','LMV + MCWG'),('tractor:lmv','TRACTOR+LMV'),('tractor:mcwg','TRACTOR+MCWG'),('lmv:tractor:mcwg','LMV+MCWG+TRACTOR')])
-
-            except:
-                print("except")
-                typee=SelectField('typee',choices=[('lmv','LMV'),('mcwg','MCWG'),('tractor','TRACTOR'),('lmv:mcwg','LMV + MCWG'),('tractor:lmv','TRACTOR+LMV'),('tractor:mcwg','TRACTOR+MCWG'),('lmv:tractor:mcwg','LMV+MCWG+TRACTOR')])
-                
-            
-    
     rtooffice=SelectField(choices=ChoicesByDb(),label="rtooffice")
     
 class regvehi(Form):
@@ -118,7 +89,9 @@ class emplogform(Form):
 #home page
 @app.route('/')
 def home():
-    
+    session.pop('logname', None)
+    session.pop('email', None)
+    session.pop('key',None)
     return render_template('home.html')
 
 
@@ -232,7 +205,7 @@ def llrapply():
         bloodgroup=form.blood_group.data
         currentdate= date.today()
         expirydate = date.today()+timedelta(30)
-        typee=form.typee.data
+        typee=request.form['typee']
         rtooffice=form.rtooffice.data
 
         #files_
@@ -265,20 +238,33 @@ def llrapply():
                 
         return redirect(url_for('userdash'))
     else:
-         with sqlite3.connect('r.db') as con:
-            try:
+        if request.method == 'POST':
+            with sqlite3.connect('r.db') as con:
                 cur=con.cursor()
-                if(cur.execute("SELECT type FROM llr WHERE email=?",(session.get('email'),))):
-                    t=cur.fetchone()
-                    if(t[0]=="lmv:tractor:mcwg"):
-                        flash("you already registered for all type of licences")
-                        return redirect(url_for('userdash'))
+                
+                typee=request.form.get('typee')
+                email=session.get('email')
+                cur.execute("UPDATE llr SET type=? WHERE email=?",(typee,email))
+                con.commit()
+                    
+                flash("update successfully")
+            return redirect(url_for('userdash'))
+        else:
+            with sqlite3.connect('r.db') as con:
+                try:
+                    cur=con.cursor()
+                    if(cur.execute("SELECT type FROM llr WHERE email=?",(session.get('email'),))):
+                        t=cur.fetchone()
+                        if(t[0]=="lmv:mcwg:tractor"):
+                            flash("you already registered for all type of licences")
+                            return redirect(url_for('userdash'))
+                        else:
+                            return render_template("appllr.html",form=form,t=t)
                     else:
-                        return render_template("appllr.html",form=form)
-                else:
+                        t="none"
+                        return render_template("appllr.html",form=form,t=t)
+                except:
                     return render_template("appllr.html",form=form)
-            except:
-                return render_template("appllr.html",form=form)
 
         
         

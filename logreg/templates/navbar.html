@@ -65,12 +65,12 @@
                         
                         </div>
                         {% else %}
-                                {% if session.get("key",None) == user %}
+                                {% if session.get("key",None) == "user" %}
                                 <button class="dropbtn"><a href="/userdashboard"> {{ session.get('logname') }} </a></button>
                         <div class="dropdown-content">
                                 <a href="/logout"><i class="fa fa-sign-out">  logout</i></a>
                                 </div>
-                                {% else %}
+                                {% elif session.get("key",None)== "admin" %}
                                 <button class="dropbtn"> <a href="/empdashboard"> {{ session.get('logname') }} </a></button>
                                 <div class="dropdown-content">
                                         <a href="/logout"><i class="fa fa-sign-out">  logout</i></a>

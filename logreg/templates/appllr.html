@@ -1,9 +1,11 @@
 {% extends "layout.html" %}
 {% block body %}
         <div class="container">
-            <h1>Enter Details:</h1><br><br>
+           
             {% from "formhelper.html" import render_field %}
             <form method=post  action="" enctype=multipart/form-data>
+              {% if t[0]== "none" %}
+              <h1>Enter Details:</h1><br><br>
           <div class="row">
               <div class="col-md-4">
                   <div class="form-group input-group-lg">
@@ -59,7 +61,19 @@
           {{render_field(form.blood_group, class_="form-control")}}
         </div>
         <div class="form-group input-group-lg">
-          {{render_field(form.typee, class_="form-control")}}
+           
+                 <select class="form-control" name="typee" id="typee">
+                 
+                   <option value="lmv">lmv</option>
+                   <option value="mcwg">mcwg</option>
+                   <option value="tractor">tractor</option>
+                   <option value="lmv:mcwg">lmv+mcwg</option>
+                   <option value="lmv:tractor">lmv+tractor</option>
+                   <option value="mcwg:trator">mcwg+tractor</option>
+
+                   <option value="lmv:mcwg:tractor">lmv+mcwg+tractor</option>
+                  
+                 </select>
         </div>
         <div class="form-group input-group-lg">
           {{render_field(form.rtooffice, class_="form-control")}}
@@ -76,7 +90,50 @@
         <input type="submit" value="submit">
   </div>     
            
-        
+        {% else %}
+        <h1>you already entered your details,select another license type to apply </h1><br><br>
+<div class="row">
+  <div class="col-md-4">
+</div>
+<div class="col-md-4">
+        <div class="form-group input-group-lg">
+           
+            <select class="form-control" name="typee">
+              {% if t[0] == "lmv" %}
+              <option value="lmv:mcwg">mcwg</option>
+              <option value="lmv:tractor">tractor</option>
+              <option value="lmv:mcwg:tractor">mcwg+tractor</option>
+              {% elif t[0] == "mcwg" %}
+              <option value="lmv:mcwg">lmv</option>
+              <option value="lmv:tractor">tractor</option>
+              <option value="lmv:mcwg:tractor">lmv+tractor</option>
+              {% elif t[0] == "tractor" %}
+              <option value="lmv:tractor">lmv</option>
+              <option value="mcwg:tractor">mcwg</option>
+              <option value="lmv:mcwg">lmv+mcwg</option>
+              {% elif t[0] == "lmv:mcwg" %}
+              <option value="lmv:mcwg:tractor">tractor</option>
+              {% elif t[0] == "lmv:tractor" %}
+              <option value="lmv:mcwg:tractor">mcwg</option>
+              {% elif t[0] == "mcwg:tractor" %}
+              <option value="lmv:mcwg:tractor">lmv</option>
+              {% elif t[0] == "none" %}
+              <option value="lmv">lmv</option>
+              <option value="mcwg">mcwg</option>
+              <option value="tractor">tractor</option>
+              <option value="lmv:mcwg">lmv+mcwg</option>
+              <option value="lmv:tractor">lmv+tractor</option>
+              <option value="mcwg:trator">mcwg+tractor</option>
+
+              <option value="lmv:mcwg:tractor">lmv+mcwg+tractor</option>
+              {% endif %}
+            </select></br>
+            <input type="submit" value="submit">
+   </div>
+</div>
+</div>
+
+   {% endif %}
           </form>
           </div>
         </div>
