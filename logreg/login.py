@@ -346,8 +346,8 @@ def regv():
 
 @app.route('/status')
 def status():
-    with sqlite3.connectdave('r.db') as con:
-            cur=con.cursdaveor()
+    with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
             cur.execute("SELECT status FROM llr WHERE email = ?",(session.get('email'),))
             st=cur.fetchone()
             if st[0] == "pending":
