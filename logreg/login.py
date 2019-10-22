@@ -3,6 +3,7 @@ from wtforms import Form,StringField,SelectField,PasswordField,validators,Submit
 import sqlite3,hashlib,os
 from flask import request
 import os
+import smtplib 
 import pdfkit
 from datetime import date,timedelta
 from flask_wtf.file import FileField, FileRequired
@@ -89,6 +90,14 @@ class vrdl(Form):
 
 #:::::::::::::::::::::::::::::::::entry main pages::::::::::::::::::::::::::::::::::::::
 #home page
+
+def mail(message,email):
+    s = smtplib.SMTP('smtp.gmail.com', 587) 
+    s.starttls() 
+    s.login("rtokarnatakastatusupdate@gmail.com","logitechasuslenovo") 
+    s.sendmail("rtokarnatakastatusupdate@gmail.com",email, message) 
+    s.quit() 
+
 @app.route('/')
 def home():
     session.pop('logname', None)
@@ -536,16 +545,20 @@ def getdetails(email):
 
 @app.route('/edit/<email>',methods=['GET','POST'])
 def updatellrdatabase(email):
+     accepted = "Your LLR Has Been Accepted"
+     rejected = "Your LLR Has Been Rejected"
      feedback=request.form.get('feedback')
      with sqlite3.connect('r.db') as con:
             cur=con.cursor()
             
             if request.form['action'] == "accept":
                 cur.execute("UPDATE llr SET status=?,feedback=? WHERE email=?",("accepted",feedback,email))
+                mail(email,accepted)
                 con.commit()
                 return redirect(url_for('adminllr'))
             else:
                 cur.execute("UPDATE llr SET status=?,feedback=? WHERE email=?",("rejected",feedback,email))
+                mail(email,rejected)
                 con.commit()
                 return redirect(url_for('adminllr'))
 
