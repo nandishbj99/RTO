@@ -6,7 +6,7 @@ import os
 import pdfkit
 from datetime import date,timedelta
 from flask_wtf.file import FileField, FileRequired
-
+import random
 from flask_pymongo import PyMongo
 app=Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/rto"
@@ -50,35 +50,7 @@ class llr_user(Form):
     gender=SelectField('gender',choices=[('male','male'),('female','female')])
     phone=IntegerField('Phone')
     blood_group=StringField('Blood_Group',[validators.DataRequired()])
-    with sqlite3.connect('r.db') as con:
-            try:
-                cur=con.cursor()
-                if(cur.execute("SELECT type FROM llr WHERE email=?",(session.get('email'),))!="None"):
-                    t=cur.fetchone()
-                    if(t[0]=="lmv"):
-                        typee=SelectField('typee',choices=[('mcwg','MCWG'),('tractor','TRACTOR'),('tractor:mcwg','TRACTOR+MCWG')])
-                    elif(t[0]=="mcwg"):
-                        typee=SelectField('typee',choices=[('lmv','LMV'),('tractor','TRACTOR'),('tractor:lmv','TRACTOR+LMV')])
-                    elif(t[0]=="tractor"):
-                        typee=SelectField('typee',choices=[('lmv','LMV'),('mcwg','MCWG'),('lmv:mcwg','LMV + MCWG')])
-                    elif(t[0]=="lmv:mcwg"):
-                        typee=SelectField('typee',choices=[('tractor','TRACTOR')])
-                    elif(t[0]=="tractor:lmv"):
-                        typee=SelectField('typee',choices=[('mcwg','MCWG')])
-                    elif(t[0]=="tractor:mcwg"):
-                        typee=SelectField('typee',choices=[('lmv','LMV')])
-                    elif(t[0]=="lmv:tractor:mcwg"):
-                        typee=SelectField('typee',choices=[('none','NONE')])
-                else:
-                    print("error")
-                    typee=SelectField('typee',choices=[('lmv','LMV'),('mcwg','MCWG'),('tractor','TRACTOR'),('lmv:mcwg','LMV + MCWG'),('tractor:lmv','TRACTOR+LMV'),('tractor:mcwg','TRACTOR+MCWG'),('lmv:tractor:mcwg','LMV+MCWG+TRACTOR')])
-
-            except:
-                print("except")
-                typee=SelectField('typee',choices=[('lmv','LMV'),('mcwg','MCWG'),('tractor','TRACTOR'),('lmv:mcwg','LMV + MCWG'),('tractor:lmv','TRACTOR+LMV'),('tractor:mcwg','TRACTOR+MCWG'),('lmv:tractor:mcwg','LMV+MCWG+TRACTOR')])
-                
-            
-    
+    typee=SelectField('typee',choices=[('lmv','LWM'),('mcwg','MCWG'),('both','LMV + MCWG')])
     rtooffice=SelectField(choices=ChoicesByDb(),label="rtooffice")
     
 class regvehi(Form):
@@ -112,7 +84,9 @@ class emplogform(Form):
     email=TextField('email',[validators.Email(),validators.DataRequired()])
     password=PasswordField('password',[validators.DataRequired()])
     secretkey=PasswordField('secretkey',[validators.DataRequired()])
-
+class vrdl(Form):
+    enginenumber=TextField('Engine Number',[validators.Length(10)])
+    
 
 #:::::::::::::::::::::::::::::::::entry main pages::::::::::::::::::::::::::::::::::::::
 #home page
@@ -265,23 +239,8 @@ def llrapply():
                 
         return redirect(url_for('userdash'))
     else:
-         with sqlite3.connect('r.db') as con:
-            try:
-                cur=con.cursor()
-                if(cur.execute("SELECT type FROM llr WHERE email=?",(session.get('email'),))):
-                    t=cur.fetchone()
-                    if(t[0]=="lmv:tractor:mcwg"):
-                        flash("you already registered for all type of licences")
-                        return redirect(url_for('userdash'))
-                    else:
-                        return render_template("appllr.html",form=form)
-                else:
-                    return render_template("appllr.html",form=form)
-            except:
-                return render_template("appllr.html",form=form)
-
         
-        
+        return render_template("appllr.html",form=form)
 
 #toshow pdff files
 @app.route('/showpdf',methods=['GET','POST'])
@@ -318,6 +277,7 @@ def regv():
             datefrom = form.datefrom.data
             dateto = form.dateto.data
             insurancenumber = form.insurancenumber.data
+            pending = "pending"
             #PHOTOS 
             sideview = request.files["sideview"]
             frontview = request.files["frontview"]
@@ -325,7 +285,7 @@ def regv():
             mongo.save_file(sideview.filename,sideview)
             mongo.save_file(frontview.filename,frontview)              
             mongo.save_file(backview.filename,backview)
-            mongo.db.vehicles.insert({'email':email,'sideview':sideview.filename,'frontview':frontview.filename,'backview':backview.filename})
+            mongo.db.vehicles.insert({'email':email,'enginenumber':enginenumber,'sideview':sideview.filename,'frontview':frontview.filename,'backview':backview.filename})
                     
                     
 
@@ -347,8 +307,8 @@ def regv():
 
 @app.route('/status')
 def status():
-    with sqlite3.connect('r.db') as con:
-            cur=con.cursor()
+    with sqlite3.connectdave('r.db') as con:
+            cur=con.cursdaveor()
             cur.execute("SELECT status FROM llr WHERE email = ?",(session.get('email'),))
             st=cur.fetchone()
             if st[0] == "pending":
@@ -396,8 +356,7 @@ def dlllr():
             cur=con.cursor()
             email=session.get('email')
             cur.execute("SELECT * FROM llr WHERE email=?",(email,))
-            data=cur.fetchone()
-                   
+            data=cur.fetchone()       
     rendered=render_template("llrform.html",data=data)
     pdf=pdfkit.from_string(rendered,False)
     response=make_response(pdf)
@@ -408,6 +367,25 @@ def dlllr():
     return render_template("userdashboard.html")
 
 
+
+@app.route('/dlvr',methods = ["POST","GET"])
+def dlvr():
+    form=vrdl(request.form)
+    if request.method=='POST' and form.validate():
+        enginenumber=form.enginenumber.data
+        with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            cur.execute("SELECT * FROM vehicle WHERE enginenumber=?",(enginenumber,))
+            data=cur.fetchone()
+            rendered=render_template("vrdform.html",data=data)
+            pdf=pdfkit.from_string(rendered,False)
+            response=make_response(pdf)
+            response.headers['Content-Type']='application/pdf'
+            response.headers['Content-Disposition']='attachment; filename=vr.pdf' #downloadable file 
+            return response  
+    return render_template("vdocdl.html")
+    
+                   
 
 
 #:::::::::::::::::::::::::::::::::::::::::::employee:::::::::::::::::::::::::::::::::::::::::
@@ -536,11 +514,13 @@ def updatedatabase(email):
                 return redirect(url_for('admindlr'))
 
 ########################################EMP REGV####################################################
+
+
 @app.route('/adminregv',methods=['GET','POST'])
 def adminregv():
     with sqlite3.connect('r.db') as con:
             cur=con.cursor()
-            if(cur.execute("SELECT firstname,lastname,email FROM vehicle WHERE status=?",("pending",))):
+            if(cur.execute("SELECT * FROM vehicle WHERE status=?",("pending",))):
                 data=cur.fetchall()
                 return render_template('adminregv.html',data=data)
             else:
@@ -550,27 +530,27 @@ def adminregv():
     return render_template('adminregv.html')
 
 
-@app.route('/frontview/<email>',methods=['GET','POST'])
-def getfront(email):
-    user=mongo.db.vehicles.find_one({'email':email})
+@app.route('/frontview/<enginenumber>',methods=['GET','POST'])
+def getfront(enginenumber):
+    user=mongo.db.vehicles.find_one({'enginenumber':enginenumber})
     filename=user['frontview']
     return mongo.send_file(filename)
-@app.route('/sideview/<email>',methods=['GET','POST'])
-def getside(email):
-    user=mongo.db.users.find_one({'email':email})
+@app.route('/sideview/<enginenumber>',methods=['GET','POST'])
+def getside(enginenumber):
+    user=mongo.db.vehicles.find_one({'enginenumber':enginenumber})
     filename=user['sideview']
     return mongo.send_file(filename)
-@app.route('/backview/<email>',methods=['GET','POST'])
-def getback(email):
-    user=mongo.db.users.find_one({'email':email})
+@app.route('/backview/<enginenumber>',methods=['GET','POST'])
+def getback(enginenumber):
+    user=mongo.db.vehicles.find_one({'enginenumber':enginenumber})
     filename=user['backview']
     return mongo.send_file(filename)
 
-@app.route('/vehicledetails/<email>',methods=['GET','POST'])
-def getvdetails(email):
+@app.route('/vehicledetails/<enginenumber>',methods=['GET','POST'])
+def getvdetails(enginenumber):
     with sqlite3.connect('r.db') as con:
             cur=con.cursor()
-            cur.execute("SELECT * FROM vehicles WHERE email=?",(email,))
+            cur.execute("SELECT * FROM vehicle WHERE enginenumber=?",(enginenumber,))
             data=cur.fetchone()       
     rendered=render_template("adminvrform.html",data=data)
     pdf=pdfkit.from_string(rendered,False)
