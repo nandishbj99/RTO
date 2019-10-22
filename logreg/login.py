@@ -6,7 +6,7 @@ import os
 import pdfkit
 from datetime import date,timedelta
 from flask_wtf.file import FileField, FileRequired
-
+import random
 from flask_pymongo import PyMongo
 app=Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/rto"
@@ -83,7 +83,9 @@ class emplogform(Form):
     email=TextField('email',[validators.Email(),validators.DataRequired()])
     password=PasswordField('password',[validators.DataRequired()])
     secretkey=PasswordField('secretkey',[validators.DataRequired()])
-
+class vrdl(Form):
+    enginenumber=TextField('Engine Number',[validators.Length(min=10,max=10)])
+    
 
 #:::::::::::::::::::::::::::::::::entry main pages::::::::::::::::::::::::::::::::::::::
 #home page
@@ -268,6 +270,7 @@ def llrapply():
 
         
         
+        return render_template("appllr.html",form=form)
 
 #toshow pdff files
 @app.route('/showpdf',methods=['GET','POST'])
@@ -304,6 +307,7 @@ def regv():
             datefrom = form.datefrom.data
             dateto = form.dateto.data
             insurancenumber = form.insurancenumber.data
+            pending = "pending"
             #PHOTOS 
             sideview = request.files["sideview"]
             frontview = request.files["frontview"]
@@ -311,7 +315,7 @@ def regv():
             mongo.save_file(sideview.filename,sideview)
             mongo.save_file(frontview.filename,frontview)              
             mongo.save_file(backview.filename,backview)
-            mongo.db.vehicles.insert({'email':email,'sideview':sideview.filename,'frontview':frontview.filename,'backview':backview.filename})
+            mongo.db.vehicles.insert({'email':email,'enginenumber':enginenumber,'sideview':sideview.filename,'frontview':frontview.filename,'backview':backview.filename})
                     
                     
 
@@ -333,8 +337,8 @@ def regv():
 
 @app.route('/status')
 def status():
-    with sqlite3.connect('r.db') as con:
-            cur=con.cursor()
+    with sqlite3.connectdave('r.db') as con:
+            cur=con.cursdaveor()
             cur.execute("SELECT status FROM llr WHERE email = ?",(session.get('email'),))
             st=cur.fetchone()
             if st[0] == "pending":
@@ -378,22 +382,75 @@ def dlr():
 
 @app.route('/dlllr')
 def dlllr():
+    acc = "accepted"
+    with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            email=session.get('email')
+            cur.execute("SELECT * FROM llr WHERE email=? AND status=?",(email,acc))
+            data=cur.fetchone()
+            if data:       
+                rendered=render_template("llrform.html",data=data)
+                pdf=pdfkit.from_string(rendered,False)
+                response=make_response(pdf)
+                response.headers['Content-Type']='application/pdf'
+                response.headers['Content-Disposition']='attachment; filename=llr.pdf' #downloadable file 
+                return response 
+            else:
+                flash("No LLR Found")
+
+    return render_template("userdashboard.html")
+
+@app.route('/dldlr')
+def dldlr():
     with sqlite3.connect('r.db') as con:
             cur=con.cursor()
             email=session.get('email')
             cur.execute("SELECT * FROM llr WHERE email=?",(email,))
-            data=cur.fetchone()
-                   
-    rendered=render_template("llrform.html",data=data)
-    pdf=pdfkit.from_string(rendered,False)
-    response=make_response(pdf)
-    response.headers['Content-Type']='application/pdf'
-    response.headers['Content-Disposition']='attachment; filename=llr.pdf' #downloadable file 
-    return response 
+            data=cur.fetchone() 
+            cur.execute("SELECT * FROM dlr WHERE email=?",(email,))
+            data1=cur.fetchone()
+            try:
+                if data1[3] == "accepted":     
+                    rendered=render_template("dlrform.html",data=data)
+                    pdf=pdfkit.from_string(rendered,False)
+                    response=make_response(pdf)
+                    response.headers['Content-Type']='application/pdf'
+                    response.headers['Content-Disposition']='attachment; filename=dlr.pdf' #downloadable file 
+                    return response
+                else:
+                    flash("No Drivers Licence Found")
+            except:
+                flash("No Drivers Licence Found")
+
 
     return render_template("userdashboard.html")
 
 
+@app.route('/dlvr',methods = ["POST","GET"])
+def dlvr():
+    form=vrdl(request.form)
+    
+    if request.method=='POST' and form.validate():
+        email = session.get('email')
+        acc = "accepted"
+        enginenumber=form.enginenumber.data
+        with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            cur.execute("SELECT * FROM vehicle WHERE enginenumber=? AND email =? AND status=?",(enginenumber,email,acc)) 
+            data=cur.fetchone()
+            if data:
+                rendered=render_template("vrdform.html",data=data)
+                pdf=pdfkit.from_string(rendered,False)
+                response=make_response(pdf)
+                response.headers['Content-Type']='application/pdf'
+                response.headers['Content-Disposition']='attachment; filename=vr.pdf' #downloadable file 
+                return response                 
+            else:
+                flash("ERROR : Check Whether You Have Entered Valid ENGINE NUMBER and You have Registered Your vehicle")
+                print("CAME HERRE")
+    return render_template("vdocdl.html")
+    
+                   
 
 
 #:::::::::::::::::::::::::::::::::::::::::::employee:::::::::::::::::::::::::::::::::::::::::
@@ -522,11 +579,13 @@ def updatedatabase(email):
                 return redirect(url_for('admindlr'))
 
 ########################################EMP REGV####################################################
+
+
 @app.route('/adminregv',methods=['GET','POST'])
 def adminregv():
     with sqlite3.connect('r.db') as con:
             cur=con.cursor()
-            if(cur.execute("SELECT firstname,lastname,email FROM vehicle WHERE status=?",("pending",))):
+            if(cur.execute("SELECT * FROM vehicle WHERE status=?",("pending",))):
                 data=cur.fetchall()
                 return render_template('adminregv.html',data=data)
             else:
@@ -536,27 +595,27 @@ def adminregv():
     return render_template('adminregv.html')
 
 
-@app.route('/frontview/<email>',methods=['GET','POST'])
-def getfront(email):
-    user=mongo.db.vehicles.find_one({'email':email})
+@app.route('/frontview/<enginenumber>',methods=['GET','POST'])
+def getfront(enginenumber):
+    user=mongo.db.vehicles.find_one({'enginenumber':enginenumber})
     filename=user['frontview']
     return mongo.send_file(filename)
-@app.route('/sideview/<email>',methods=['GET','POST'])
-def getside(email):
-    user=mongo.db.users.find_one({'email':email})
+@app.route('/sideview/<enginenumber>',methods=['GET','POST'])
+def getside(enginenumber):
+    user=mongo.db.vehicles.find_one({'enginenumber':enginenumber})
     filename=user['sideview']
     return mongo.send_file(filename)
-@app.route('/backview/<email>',methods=['GET','POST'])
-def getback(email):
-    user=mongo.db.users.find_one({'email':email})
+@app.route('/backview/<enginenumber>',methods=['GET','POST'])
+def getback(enginenumber):
+    user=mongo.db.vehicles.find_one({'enginenumber':enginenumber})
     filename=user['backview']
     return mongo.send_file(filename)
 
-@app.route('/vehicledetails/<email>',methods=['GET','POST'])
-def getvdetails(email):
+@app.route('/vehicledetails/<enginenumber>',methods=['GET','POST'])
+def getvdetails(enginenumber):
     with sqlite3.connect('r.db') as con:
             cur=con.cursor()
-            cur.execute("SELECT * FROM vehicles WHERE email=?",(email,))
+            cur.execute("SELECT * FROM vehicle WHERE enginenumber=?",(enginenumber,))
             data=cur.fetchone()       
     rendered=render_template("adminvrform.html",data=data)
     pdf=pdfkit.from_string(rendered,False)
