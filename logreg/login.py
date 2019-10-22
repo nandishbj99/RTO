@@ -332,7 +332,7 @@ def regv():
             with sqlite3.connect('r.db') as con:
                 try:
                     cur=con.cursor()
-                    cur.execute("INSERT INTO vehicle VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(firstname,lastname,fathersname,email,address,enginenumber,ownership,vetype,vclass,purchasedate,manufacture,modelname,manufacturedate,fuel,color,insurencecompany,datefrom,dateto,insurancenumber,0))
+                    cur.execute("INSERT INTO vehicle(firstname,lastname,fathersname,email,address,enginenumber,ownership,vetype,vclass,purchasedate,manufacture,modelname,manufacturedate,fuel,color,insurencecompany,datefrom,dateto,insurancenumber,status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(firstname,lastname,fathersname,email,address,enginenumber,ownership,vetype,vclass,purchasedate,manufacture,modelname,manufacturedate,fuel,color,insurencecompany,datefrom,dateto,insurancenumber,pending))
                     cur.commit()
                    
                 except:
@@ -390,7 +390,22 @@ def dlr():
                 flash("Please Apply For LLR First")
                 return render_template('userdashboard.html')
 
-    
+@app.route('/dlllr')
+def dlllr():
+    with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            email=session.get('email')
+            cur.execute("SELECT * FROM llr WHERE email=?",(email,))
+            data=cur.fetchone()
+                   
+    rendered=render_template("llrform.html",data=data)
+    pdf=pdfkit.from_string(rendered,False)
+    response=make_response(pdf)
+    response.headers['Content-Type']='application/pdf'
+    response.headers['Content-Disposition']='attachment; filename=llr.pdf' #downloadable file 
+    return response 
+
+    return render_template("userdashboard.html")
 
 
 
@@ -564,6 +579,22 @@ def getvdetails(email):
     response.headers['Content-Disposition']='attachment; filename=vr.pdf' #downloadable file 
     return response
 
+@app.route('/vredit/<enginenumber>',methods=['GET','POST'])
+def updatevdatabase(enginenumber):
+     zero = "0000"
+     vno =  random.randint(1000,9999)
+     feedback=request.form.get('feedback')
+     with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            
+            if request.form['action'] == "accept":
+                cur.execute("UPDATE vehicle SET status=?,vehiclenumber=? WHERE enginenumber=?",("accepted",vno,enginenumber))
+                con.commit()
+                return redirect(url_for('adminregv'))
+            else:
+                cur.execute("UPDATE vehicle SET status=?,vehiclenumber=? WHERE enginenumber=?",("rejected",zero,enginenumber))
+                con.commit()
+                return redirect(url_for('adminregv'))
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #class uploadSSLC(Form):
