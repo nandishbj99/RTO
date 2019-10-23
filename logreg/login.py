@@ -4,6 +4,7 @@ import sqlite3,hashlib,os
 from flask import request
 import os
 import smtplib 
+from email.mime.text import MIMEText
 import pdfkit
 from datetime import date,timedelta
 from flask_wtf.file import FileField, FileRequired
@@ -91,12 +92,21 @@ class vrdl(Form):
 #:::::::::::::::::::::::::::::::::entry main pages::::::::::::::::::::::::::::::::::::::
 #home page
 
-def mail(message,email):
-    s = smtplib.SMTP('smtp.gmail.com', 587) 
-    s.starttls() 
-    s.login("rtokarnatakastatusupdate@gmail.com","logitechasuslenovo") 
-    s.sendmail("rtokarnatakastatusupdate@gmail.com",email, message) 
-    s.quit() 
+def mail(email,message):
+    msg=MIMEText(message)
+    msg['From']="karnatakartostatus@gmail.com"
+    msg['To']=email
+    msg['Subject']="RTO UPDATE"
+    SERVER=smtplib.SMTP('smtp.gmail.com',587)
+    SERVER.starttls()
+    SERVER.login("karnatakartostatus@gmail.com","lenovoasus")
+    SERVER.send_message(msg)
+    SERVER.quit()
+
+
+
+
+
 
 @app.route('/')
 def home():
