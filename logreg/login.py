@@ -266,16 +266,18 @@ def llrapply():
                     cur=con.cursor()
                     if(cur.execute("SELECT type FROM llr WHERE email=?",(session.get('email'),))):
                         t=cur.fetchone()
-                        if(t[0]=="lmv:mcwg:tractor"):
-                            flash("you already registered for all type of licences")
-                            return redirect(url_for('userdash'))
+                        if t:
+                            if(t[0]=="lmv:mcwg:tractor"):
+                                flash("you already registered for all type of licences")
+                                return redirect(url_for('userdash'))
+                            else:
+                                return render_template("appllr.html",form=form,t=t)
                         else:
+                            t="none"
                             return render_template("appllr.html",form=form,t=t)
-                    else:
-                        t="none"
-                        return render_template("appllr.html",form=form,t=t)
                 except:
-                    return render_template("appllr.html",form=form)
+                    flash("please retry ")
+                    return redirect(url_for('userdash'))
 
         
         
