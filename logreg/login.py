@@ -174,18 +174,17 @@ def login():
         upassword=form.password.data
         with sqlite3.connect('r.db') as con:
             cur=con.cursor()
-            if(cur.execute("SELECT email,password,firstname,lastname FROM users WHERE email=? and password=?",(useremail,hashlib.md5(upassword.encode()).hexdigest()))):
+            try:
+                cur.execute("SELECT email,password,firstname,lastname FROM users WHERE email=? and password=?",(useremail,hashlib.md5(upassword.encode()).hexdigest()))
                 data=cur.fetchone()
                 session['email']=useremail
                 session['logname']=data[2]
                 session['key']="user"
-
-                flash('Loged in','success')
+                flash('Logged in','success')
                 return redirect(url_for('userdash'))
-            else:
-                flash("please register first and login")
+            except:
+                flash("please register first and login","danger")
                 return redirect(url_for('home'))
-                
 
     return render_template("login_page.html",form=form)
 
@@ -203,6 +202,10 @@ def llrdownload():
     response.headers['Content-Type']='application/pdf'
     response.headers['Content-Disposition']='attachment; filename=llr.pdf' #downloadable file 
     return response
+    
+        
+   
+    
         
 
 @app.route("/llr",methods=["GET","POST"])
@@ -347,7 +350,7 @@ def regv():
                     cur.commit()
                    
                 except:
-                    flash("Successfull Registered")
+                    flash("Successfull Registered","success")
                 
             return redirect(url_for('userdash'))
             flash("Registerd Successfully")
@@ -358,7 +361,8 @@ def regv():
 
 @app.route('/status')
 def status():
-    with sqlite3.connect('r.db') as con:
+    try:
+        with sqlite3.connect('r.db') as con:
             cur=con.cursor()
             cur.execute("SELECT status FROM llr WHERE email = ?",(session.get('email'),))
             st=cur.fetchone()
@@ -369,6 +373,12 @@ def status():
             else:
                 return render_template("statusaccepted.html")
             con.close()
+    except:
+        flash("Please Apply For LLR First!","warning")
+        return redirect(url_for('userdash'))
+        
+    
+   
     
 #USERDASHBOARD
 @app.route('/userdashboard')
@@ -385,7 +395,7 @@ def dlr():
             cur=con.cursor()
             cur.execute("INSERT INTO dlr(email,currentdate,expirydate,status,dlnumber) VALUES(?,?,?,?,?)",(session.get('email'),currentdate,expirydate,"pending","000000000"))
             con.commit()
-        flash("Regestered Successfully")
+        flash("Regestered Successfully","success")
         return render_template('userdashboard.html')
 
 
@@ -398,7 +408,7 @@ def dlr():
                 return render_template("appdlr.html")
             else:
                
-                flash("Please Apply For LLR First")
+                flash("Please Apply For LLR First","warning")
                 return render_template('userdashboard.html')
 
 @app.route('/dlllr')
@@ -417,7 +427,7 @@ def dlllr():
                 response.headers['Content-Disposition']='attachment; filename=llr.pdf' #downloadable file 
                 return response 
             else:
-                flash("No LLR Found")
+                flash("No LLR Found","danger")
 
     return render_template("userdashboard.html")
 
@@ -439,9 +449,9 @@ def dldlr():
                     response.headers['Content-Disposition']='attachment; filename=dlr.pdf' #downloadable file 
                     return response
                 else:
-                    flash("No Drivers Licence Found")
+                    flash("No Drivers Licence Found","danger")
             except:
-                flash("No Drivers Licence Found")
+                flash("No Drivers Licence Found","danger")
 
 
     return render_template("userdashboard.html")
@@ -467,8 +477,8 @@ def dlvr():
                 response.headers['Content-Disposition']='attachment; filename=vr.pdf' #downloadable file 
                 return response                 
             else:
-                flash("ERROR : Check Whether You Have Entered Valid ENGINE NUMBER and You have Registered Your vehicle")
-                print("CAME HERRE")
+                flash("ERROR : Check Whether You Have Entered Valid ENGINE NUMBER and You have Registered Your vehicle","warning")
+                
     return render_template("vdocdl.html")
     
                    
@@ -489,16 +499,22 @@ def emplogin():
         secretkey=form.secretkey.data
         with sqlite3.connect('r.db') as con:
             cur=con.cursor()
-            if(cur.execute("SELECT * FROM admin WHERE email=? and password=? and secretkey=?",(empemail,emppassword,secretkey))):
-                flash('Logged in','success')
-                data=cur.fetchone()
-                session['email']=data[0]
-                session['logname']=data[3]
-                session['key']="admin"
-                return redirect(url_for('empdash'))
-            else:
-                flash("please contact admin for registration")
+            try:
+                if(cur.execute("SELECT * FROM admin WHERE email=? and password=? and secretkey=?",(empemail,emppassword,secretkey))):
+                    flash('Logged in','success')
+                    data=cur.fetchone()
+                    session['email']=data[0]
+                    session['logname']=data[3]
+                    session['key']="admin"
+                    return redirect(url_for('empdash'))
+                else:
+                    flash("please contact admin for registration","danger")
+                    return redirect(url_for('home'))
+            except:
+                flash("please contact admin for registration","danger")
                 return redirect(url_for('home'))
+
+            
                 
 
     return render_template("emplogin.html",form=form)
@@ -510,12 +526,19 @@ def emplogin():
 def adminllr():
     with sqlite3.connect('r.db') as con:
             cur=con.cursor()
-            if(cur.execute("SELECT firstname,email,age,city,gender,currentdate,type FROM llr WHERE status=?",("pending",))):
-                data=cur.fetchall()
-                return render_template('adminllr.html',data=data)
-            else:
-                flash("error")
+            try:
+                if(cur.execute("SELECT firstname,email,age,city,gender,currentdate,type FROM llr WHERE status=?",("pending",))):
+                    data=cur.fetchall()
+                    return render_template('adminllr.html',data=data)
+                
+            
+                else:
+                    flash("no user requests","warning")
+                    return render_template('empdashboard.html')
+            except:
+                flash("no user requests","warning")
                 return render_template('empdashboard.html')
+
 
    
 
@@ -580,11 +603,15 @@ def updatellrdatabase(email):
 def admindlr():
      with sqlite3.connect('r.db') as con:
             cur=con.cursor()
-            if(cur.execute("select firstname,email,age,city,gender,currentdate,type from llr where email in(select email from dlr where status = ?)",("pending",))):
-                data=cur.fetchall()
-                return render_template('admindlr.html',data=data)
-            else:
-                flash("error")
+            try:
+                if(cur.execute("select firstname,email,age,city,gender,currentdate,type from llr where email in(select email from dlr where status = ?)",("pending",))):
+                    data=cur.fetchall()
+                    return render_template('admindlr.html',data=data)
+                else:
+                    flash("no user requests","warning")
+                    return render_template('empdashboard.html')
+            except:
+                flash("no user requests","warning")
                 return render_template('empdashboard.html')
 
      return render_template('admindlr.html')
