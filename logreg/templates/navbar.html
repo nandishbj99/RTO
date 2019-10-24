@@ -52,22 +52,21 @@
               <div class="collapse navbar-collapse" id="navbarSupportedContent" >
                   <ul class="nav navbar-nav ml-auto">
               
-                      <li class="nav-item">
-                          <a class="nav-link" href="#">Community</a>
-                      </li>
+                      
                     
-                      <div class="dropdown">
+                      <div class="dropdown" id="navbarSupportedContent">
                            {% if session.get("email", None) == None %}
-                        <button class="dropbtn">Login</button>
-                        <div class="dropdown-content">
+                        <button class="dropbtn" style="font-size: 20px;" >Login</button>
+                        <div class="dropdown-content" >
                         <a href="/login"><i class="fa fa-user-circle">   User Login</i></a>
                         <a href="/emplogin"><i class="fa fa-user-secret">  Employee Login</i></a>
                         
                         </div>
                         {% else %}
                                 {% if session.get("key",None) == "user" %}
+                                
                                 <button class="dropbtn"><a href="/userdashboard"> {{ session.get('logname') }} </a></button>
-                        <div class="dropdown-content">
+                        <div class="dropdown-content" id="navbarSupportedContent">
                                 <a href="/logout"><i class="fa fa-sign-out">  logout</i></a>
                                 </div>
                                 {% elif session.get("key",None)== "admin" %}
@@ -75,6 +74,7 @@
                                 <div class="dropdown-content">
                                         <a href="/logout"><i class="fa fa-sign-out">  logout</i></a>
                                  </div>
+                                
                                  {% endif %}
                                 {% endif %}
 
@@ -323,29 +323,29 @@ a.article:hover {
  }
 }
 
-
- /* Dropdown Button */
- .dropbtn {
-  background-color: rgb(151, 241, 241);
-  color: #999;
-  padding: 4px;
+.dropbtn {
+  background-color:rgb(151, 241, 241);
+  font-family: 'Poppins', sans-serif;
+  color: Gray;
+  padding: 20px;
   font-size: 16px;
   border: none;
+  cursor: pointer;
+  margin-right: 30px;
+  
 }
 
 /* The container <div> - needed to position the dropdown content */
 .dropdown {
   position: relative;
   display: inline-block;
-  margin-right: 50px;
-  padding-top: 5px;
 }
 
 /* Dropdown Content (Hidden by Default) */
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #f1f1f1;
+  background-color: #f9f9f9;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
@@ -360,12 +360,15 @@ a.article:hover {
 }
 
 /* Change color of dropdown links on hover */
-.dropdown-content a:hover {background-color: #ddd;}
+.dropdown-content a:hover {background-color: rgb(151, 241, 241)}
 
 /* Show the dropdown menu on hover */
-.dropdown:hover .dropdown-content {display:block; padding-right: 5px;}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
-.dropdown:hover .dropbtn {background-color: blue;} 
+.dropdown:hover .dropbtn {
+  background-color: rgb(151, 241, 241);
+}
 </style>
- 

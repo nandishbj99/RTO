@@ -6,20 +6,49 @@
 <div class="alert" role="alert">{{mes}}</div>
 {% endfor %}
 -->
-<div class="page-wrap">
-<center>
-<div class="jumbotron pl-4 pt-4">
-<div class="container">
-        User Dashboard</br>
-        <h1>
-        Welcome , <b>{{session.logname}}</b></h1>
-</div>
-</div>
-</center>
+<div class="jumbotron">
+    <h1>Welcome, {{session.get("logname")}}</h1>      
+    
+  </div>
+
 <br><br><br>
 <div class="row">
-  <div class="col-md-4">
-    <p>Download your documents</p>
+
+<div class="col-md-8">
+<table>
+  <tr>
+  <td><div class="button-4">
+    <div class="eff-4"></div>
+    <a href="/llr"> Apply for LLR </a>
+  </div></td>
+</tr>
+<tr>
+    <td><div class="button-4">
+      <div class="eff-4"></div>
+      <a href="/dlr">Apply for DLR</a>
+    </div></td>
+  </tr>
+  <tr>
+      <td><div class="button-4">
+        <div class="eff-4"></div>
+        <a href="/regv">Register Vehicles</a>
+      </div></td>
+    </tr>
+    <tr>
+        <td><div class="button-4">
+          <div class="eff-4"></div>
+          <a href="/status">Status of request</a>
+        </div></td>
+      </tr>
+      
+</table>
+
+
+
+</div>
+<div class="vl"></div>
+<div class="col-md-2">
+    <p>Download Your Documents</p>
       <div class="dropdown">
           <button class="dropbtn">Download</button>
           <div class="dropdown-content">
@@ -28,34 +57,31 @@
             <a href="/dlvr">Download VEHICLE REG</a>
           </div>
 
-  </div></div>
-<div class="col-md-8">
-  <p>Apply for Licences</p>
-<a href="/llr">Apply for LLR</a><br>
-<a href="/dlr">Apply for DLR</a><br>
-<a href="/regv">Register Vehicles</a><br>
-<a href="/status">Status of request</a><br>
-
-</div>
-</div>
-
-
-
-
-</div>
+  </div>
 <style>
-       .dropdown {
+.dropbtn {
+  background-color:rgb(151, 241, 241);
+  font-family: 'Poppins', sans-serif;
+  color: Gray;
+  padding: 20px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  margin-right: 50px;
+  
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
   position: relative;
   display: inline-block;
-  margin-right: 50px;
-  padding-top: 5px;
 }
 
 /* Dropdown Content (Hidden by Default) */
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #f1f1f1;
+  background-color: #f9f9f9;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
@@ -70,12 +96,68 @@
 }
 
 /* Change color of dropdown links on hover */
-.dropdown-content a:hover {background-color: #ddd;}
+.dropdown-content a:hover {background-color: rgb(151, 241, 241)}
 
 /* Show the dropdown menu on hover */
-.dropdown:hover .dropdown-content {display:block; padding-right: 5px;}
+.dropdown:hover .dropdown-content {
+  display: block;
+}
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
-.dropdown:hover .dropbtn {background-color: blue;} 
-        </style>
+.dropdown:hover .dropbtn {
+  background-color: rgb(151, 241, 241);
+}
+
+
+/*THIS IS S+FOR THE SIDE UP BUTTONS*/
+
+
+
+.button-4{
+  font-family: 'Poppins', sans-serif;
+  width:1000px;
+  height:50px;
+  border:2px solid #34495e;
+  float:left;
+  text-align:center;
+  cursor:pointer;
+  position:relative;
+  box-sizing:border-box;
+  overflow:hidden;
+  margin:0 0 40px 50px;
+  background-color:rgb(255, 255, 255);
+  
+  
+}
+.button-4 a{
+  font-family:arial;
+  font-size:16px;
+  color:#34495e;
+  text-decoration:none;
+  line-height:50px;
+  transition:all .3s ease;
+  z-index:2;
+  position:relative;
+  
+}
+.eff-4{
+  width:1000px;
+  height:50px;
+  left:-1000px;
+  background:rgb(151, 241, 241);
+  position:absolute;
+  transition:all .3s ease;
+  z-index:1;
+}
+.button-4:hover .eff-4{
+  left:0;
+}
+.button-4:hover a{
+  color:#fff;
+}
+.vl {
+  border-left: 6px solid rgb(151, 241, 241);
+  height: 350px;
+}
+</style>
 {%endblock%}
