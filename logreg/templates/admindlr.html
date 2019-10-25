@@ -10,16 +10,16 @@
     <table>
         <tr>
             <th>Name:</th>
-            <th>age:</th>
-            <th>city:</th>
-            <th>gender:</th>
-            <th>applied date</th>
-            <th>type:</th>
+            <th>Age:</th>
+            <th>City:</th>
+            <th>Gender:</th>
+            <th>Applied date</th>
+            <th>Type:</th>
             <th>aadhar</th>
             <th>voter id</th>
-            <th>sslc</th>
-            <th>details</th>
-            <th>feedback</th>
+            <th>SSLC</th>
+            <th>Details</th>
+            <th>Feedback</th>
 
 
         </tr>
@@ -39,7 +39,7 @@
             <td><a href="/sslc/{{ row[1] }}"><button type="button" class="btn-primary">sslc</button></a></td>
             <td><a href="/details/{{ row[1] }}"><button type="button" class="btn-danger">details</button></a></td>
             <td><input type="text" name="feedback"></td>
-            <td><input type="submit" name="action" class="btn-warning" value="accept"></td>
+            <td><input type="submit" name="action" class="button button1" value="accept"></td>
             <td><input type="submit" name="action" class="btn-warning" value="reject"></td>
 
         </tr>
@@ -55,5 +55,32 @@
     <br><br>
     <p> No requests for DLR</p>
 </center>
+<style>
+    .button {
+      background-color: rgb(151, 241, 241); /* Green */
+      border: none;
+      color: white;
+      padding: 16px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      -webkit-transition-duration: 0.4s; /* Safari */
+      transition-duration: 0.4s;
+      cursor: pointer;
+    }
+    
+    .button1 {
+      background-color: white; 
+      color: black; 
+      border: 2px solid rgb(151, 241, 241);
+    }
+    
+    .button1:hover {
+      background-color: rgb(151, 241, 241);
+      color: white;
+    }
+    </style>
         {%endif%}
 {% endblock%}
