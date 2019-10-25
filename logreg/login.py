@@ -9,6 +9,10 @@ import pdfkit
 from datetime import date,timedelta
 from flask_wtf.file import FileField, FileRequired
 import random
+import io
+import base64
+
+
 from flask_pymongo import PyMongo
 app=Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/rto"
@@ -76,7 +80,10 @@ class regvehi(Form):
     insurancenumber = StringField('Cover Number', [validators.Length(min=10,max=10)])
 
 
-
+class passwordform(Form):
+    old=PasswordField('OLD password',[validators.DataRequired()])
+    password=PasswordField('NEW password',[validators.DataRequired(),validators.EqualTo('confirm', message='Passwords must match')])
+    confirm=PasswordField('Confirm Password')
 class mylogform(Form):
     email=TextField('email',[validators.Email(),validators.DataRequired()])
     password=PasswordField('password',[validators.DataRequired()])
@@ -138,6 +145,17 @@ def logout():
     session.pop('email', None)
     session.pop('key',None)
     return(redirect(url_for('home')))
+@app.route('/plot')
+def build_plot():
+    img = io.StringIO()
+    y = [1,2,3,4,5]
+    x = [0,2,1,3,4]
+    plt.plot(x,y)
+    plt.savefig(img, format='png')
+    img.seek(0)
+
+    plot_url = base64.b64encode(img.getvalue())
+    return render_template('plot.html', plot_url=plot_url)
 
 #:::::::::::::::::::::::::::::::::::::::::::::users pages:::::::::::::::::::::::::::::::
 #register page
@@ -164,7 +182,35 @@ def reg():
     else:
         return render_template('reg.html',form=form)
 
+#::::::::::::::::::::::::::::::::::::::::::::password change:::::::::::
+@app.route('/password',methods=['POST','GET'])
+def password():
+    form=passwordform(request.form)
+    if request.method=='POST' and form.validate():
+        email=session.get('email')
+        old=form.old.data
+        new=form.password.data
+        with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            try:
+                cur.execute("SELECT password FROM users WHERE email=?",(email,))
+                data=cur.fetchone()
+                if hashlib.md5(old.encode()).hexdigest() == data[0]:
+                    cur.execute("UPDATE users SET password=? WHERE email=?",(hashlib.md5(new.encode()).hexdigest(),email))
+                    con.commit()
+                    flash("password changed successfully","success")
+                    return redirect(url_for('userdash'))
+                else:
+                    flash("your old password is wrong","warning")
+                    return redirect(url_for('userdash'))
+            except:
+                flash("no user","danger")
+                return redirect(url_for('userdash'))
+    return render_template("passwordchange.html",form=form)
 
+
+                
+        
 #login page
 @app.route('/login',methods=['POST','GET'])
 def login():
@@ -400,6 +446,7 @@ def dlr():
 
 
     with sqlite3.connect('r.db') as con:
+        try:
             cur=con.cursor()
             cur.execute("SELECT status FROM llr WHERE email = ?",(session.get('email'),))
             st=cur.fetchone()
@@ -410,6 +457,10 @@ def dlr():
                
                 flash("Please Apply For LLR First","warning")
                 return render_template('userdashboard.html')
+        except:
+            flash("Please Apply For LLR First","warning")
+            return render_template('userdashboard.html')
+
 
 @app.route('/dlllr')
 def dlllr():

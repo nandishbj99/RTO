@@ -11,6 +11,35 @@
                   <div class="form-group input-group-lg">
                       {{render_field(form.firstname, class_="form-control")}}
                     </div>
+                    <div class="form-group input-group-lg">
+                        {{render_field(form.email, class_="form-control")}}
+                      </div>
+                      <div class="form-group input-group-lg">
+                          {{render_field(form.pincode, class_="form-control")}}
+                        </div>
+                        <div class="form-group input-group-lg">
+                            {{render_field(form.country, class_="form-control")}}
+                          </div>
+                          <div class="form-group input-group-lg">
+                              {{render_field(form.gender, class_="form-control")}}
+                            </div>
+                            <label name="Select Type">Select Type</label>
+                            <div class="form-group input-group-lg">
+           
+                                <select class="form-control" name="typee" id="typee">
+                                
+                                  <option value="lmv">lmv</option>
+                                  <option value="mcwg">mcwg</option>
+                                  <option value="tractor">tractor</option>
+                                  <option value="lmv:mcwg">lmv+mcwg</option>
+                                  <option value="lmv:tractor">lmv+tractor</option>
+                                  <option value="mcwg:trator">mcwg+tractor</option>
+               
+                                  <option value="lmv:mcwg:tractor">lmv+mcwg+tractor</option>
+                                 
+                                </select>
+                       </div>
+                   
               </div>
             <div class="col-md-4">
         
@@ -20,76 +49,87 @@
         <div class="form-group input-group-lg">
           {{render_field(form.lastname, class_="form-control")}}
         </div>
+       
         <div class="form-group input-group-lg">
-          {{render_field(form.fathersname, class_="form-control")}}
-        </div>
-        <div class="form-group input-group-lg">
-          {{render_field(form.email, class_="form-control")}}
-        </div>
+            {{render_field(form.address, class_="form-control")}}
+          </div>
         
-        <div class="form-group input-group-lg">
-          {{render_field(form.address, class_="form-control")}}
-        </div>
-        <div class="form-group input-group-lg">
-          {{render_field(form.pincode, class_="form-control")}}
-        </div>
-        <div class="form-group input-group-lg">
-          {{render_field(form.city, class_="form-control")}}
-        </div>
+     
+       
+      
         <div class="form-group input-group-lg">
           {{render_field(form.district, class_="form-control")}}
         </div>
-        <div class="form-group input-group-lg">
-          {{render_field(form.state, class_="form-control")}}
-        </div>
-        <div class="form-group input-group-lg">
-          {{render_field(form.country, class_="form-control")}}
-        </div>
+        
+      
         <div class="form-group input-group-lg">
           {{render_field(form.dob, class_="form-control")}}
         </div>
         <div class="form-group input-group-lg">
-          {{render_field(form.age, class_="form-control")}}
-        </div>
-        <div class="form-group input-group-lg">
-          {{render_field(form.gender, class_="form-control")}}
-        </div>
-        <div class="form-group input-group-lg">
-          {{render_field(form.phone, class_="form-control")}}
-        </div>
-        <div class="form-group input-group-lg">
-          {{render_field(form.blood_group, class_="form-control")}}
-        </div>
-        <div class="form-group input-group-lg">
-           
-                 <select class="form-control" name="typee" id="typee">
-                 
-                   <option value="lmv">lmv</option>
-                   <option value="mcwg">mcwg</option>
-                   <option value="tractor">tractor</option>
-                   <option value="lmv:mcwg">lmv+mcwg</option>
-                   <option value="lmv:tractor">lmv+tractor</option>
-                   <option value="mcwg:trator">mcwg+tractor</option>
-
-                   <option value="lmv:mcwg:tractor">lmv+mcwg+tractor</option>
-                  
-                 </select>
-        </div>
+            {{render_field(form.phone, class_="form-control")}}
+          </div>
+       
+       
+       
+      
         <div class="form-group input-group-lg">
           {{render_field(form.rtooffice, class_="form-control")}}
         </div>
-        <input type="file" name="aadhar">uploadADHAR
-        <br>
-        <input type="file" name="photo">upload photo
-        <br>
-        <input type="file" name="sslc">upload sslc
-        <br>
-        <input type="file" name="voterid">upload sslc
-        <br>
-        <input type="file" name="signature" >upload signature    <br><br>
+        
+  </div>  
+  <div class="col-md-4">
+      <div class="form-group input-group-lg">
+          {{render_field(form.fathersname, class_="form-control")}}
+        </div>
+        <div class="form-group input-group-lg">
+            {{render_field(form.city, class_="form-control")}}
+          </div>
+          <div class="form-group input-group-lg">
+              {{render_field(form.state, class_="form-control")}}
+            </div>
+            <div class="form-group input-group-lg">
+                {{render_field(form.age, class_="form-control")}}
+              </div>
+             
+                
+                <div class="form-group input-group-lg">
+                    {{render_field(form.blood_group, class_="form-control")}}
+                  </div>
+  </div>   
+          </div> 
+          <div class="row">
+             
+<div class="col-md-4"></div>
+              <div class="col-md-8">
+<table>
+  <tr>
+      <td>Upload AADHAR:</td>
+    <td><input type="file" name="aadhar"></td>
+   
+  </tr>
+  <tr>
+      <td>Upload photo</td>
+    <td> <input type="file" name="photo"></td>
+     
+  </tr>
+  <tr>
+    <td>Upload SSLC Marks Card:</td>
+    <td><input type="file" name="sslc"></td>
+  </tr>
+  <tr>
+    <td>Upload Voter Id</td>
+    <td> <input type="file" name="voterid"></td>
+  </tr>
+  <tr>
+    <td>Upload signature:</td>
+    <td> <input type="file" name="signature" ></td>
+  </tr>
+</table>
+
+  </div>
+
+          </div>
         <input type="submit" value="submit">
-  </div>     
-           
         {% else %}
         <h1>you already entered your details,select another license type to apply </h1><br><br>
 <div class="row">
@@ -130,6 +170,9 @@
             </select></br>
             <input type="submit" value="submit">
    </div>
+  
+  
+  </div>
 </div>
 </div>
 
