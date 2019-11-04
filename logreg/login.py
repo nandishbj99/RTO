@@ -95,6 +95,8 @@ class emplogform(Form):
 class vrdl(Form):
     enginenumber=TextField('Engine Number',[validators.Length(min=10,max=10)])
     
+class adstatus(Form):
+    date = TextField('date')
 
 #:::::::::::::::::::::::::::::::::entry main pages::::::::::::::::::::::::::::::::::::::
 #home page
@@ -126,11 +128,7 @@ def home():
 #about page
 @app.route('/about')
 def about():
-    with sqlite3.connect('r.db') as con:
-            cur=con.cursor()
-            cur.execute("SELECT email,password,firstname,lastname FROM users")
-            data=cur.fetchall()
-            return render_template('about.html',data=data[0][2])
+        return render_template('about.html')
 
 
 #contact page
@@ -631,6 +629,7 @@ def getdetails(email):
 
 @app.route('/edit/<email>',methods=['GET','POST'])
 def updatellrdatabase(email):
+     curdate = date.today()
      accepted = "Your LLR Has Been Accepted"
      rejected = "Your LLR Has Been Rejected"
      feedback=request.form.get('feedback')
@@ -638,12 +637,12 @@ def updatellrdatabase(email):
             cur=con.cursor()
             
             if request.form['action'] == "accept":
-                cur.execute("UPDATE llr SET status=?,feedback=? WHERE email=?",("accepted",feedback,email))
+                cur.execute("UPDATE llr SET status=?,admindate=?,feedback=? WHERE email=?",("accepted",curdate,feedback,email))
                 mail(email,accepted)
                 con.commit()
                 return redirect(url_for('adminllr'))
             else:
-                cur.execute("UPDATE llr SET status=?,feedback=? WHERE email=?",("rejected",feedback,email))
+                cur.execute("UPDATE llr SET status=?,admindate=?,feedback=? WHERE email=?",("rejected",curdate,feedback,email))
                 mail(email,rejected)
                 con.commit()
                 return redirect(url_for('adminllr'))
@@ -669,15 +668,17 @@ def admindlr():
 @app.route('/dlredit/<email>',methods=['GET','POST'])
 def updatedatabase(email):
      feedback=request.form.get('feedback')
+     curdate = date.today()
      with sqlite3.connect('r.db') as con:
             cur=con.cursor()
             
             if request.form['action'] == "accept":
-                cur.execute("UPDATE dlr SET status=?,feedback=? WHERE email=?",("accepted",feedback,email))
+                cur.execute("UPDATE dlr SET status=?,admindate=?,feedback=?,admindate=? WHERE email=?",("accepted",curdate,feedback,email))
+                
                 con.commit()
                 return redirect(url_for('admindlr'))
             else:
-                cur.execute("UPDATE dlr SET status=?,feedback=? WHERE email=?",("rejected",feedback,email))
+                cur.execute("UPDATE dlr SET status=?,admindate=?,feedback=? WHERE email=?",("rejected",curdate,feedback,email))
                 con.commit()
                 return redirect(url_for('admindlr'))
 
@@ -730,19 +731,35 @@ def getvdetails(enginenumber):
 @app.route('/vredit/<enginenumber>',methods=['GET','POST'])
 def updatevdatabase(enginenumber):
      zero = "0000"
+     curdate = date.today()
      vno =  random.randint(1000,9999)
      feedback=request.form.get('feedback')
      with sqlite3.connect('r.db') as con:
             cur=con.cursor()
             
             if request.form['action'] == "accept":
-                cur.execute("UPDATE vehicle SET status=?,vehiclenumber=? WHERE enginenumber=?",("accepted",vno,enginenumber))
+                cur.execute("UPDATE vehicle SET status=?,admindate=?,vehiclenumber=? WHERE enginenumber=?",("accepted",curdate,vno,enginenumber))
                 con.commit()
                 return redirect(url_for('adminregv'))
             else:
-                cur.execute("UPDATE vehicle SET status=?,vehiclenumber=? WHERE enginenumber=?",("rejected",zero,enginenumber))
+                cur.execute("UPDATE vehicle SET status=?,admindate=?,vehiclenumber=? WHERE enginenumber=?",("rejected",curdate,zero,enginenumber))
                 con.commit()
                 return redirect(url_for('adminregv'))
+#################################################EMP STATUS##############################################
+
+@app.route('/adstatus',methods=['GET','POST'])
+def adstatus():
+    if request.method=='POST':
+        date = request.form['date']
+        typee=request.form['typee']
+        """with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            cur.execute("SELECT applno,status FROM ? WHERE admindate=?",(typee,date))
+            data=cur.fetchone()      """ 
+
+    return render_template("adstatus.html")
+
+
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #class uploadSSLC(Form):

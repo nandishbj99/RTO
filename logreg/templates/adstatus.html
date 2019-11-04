@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="page-wrap">
+<center>
+<form method="POST" type="">
+    <label>Enter The date</label>
+    <input type="text" name="date" placeholder="YYYY-MM-DD"><br><br>
+    <label>Select Type</label>
+    
+<select name="typee" id="type">
+        <option value="llr">LLR</option>
+        <option value="dlr">DLR</option>
+        <option value="vehicle">VEHICLE REGISTRATION</option>
+        
+      </select>
+      <select name="typee" id="type">
+            <option value="acc">Accepted</option>
+            <option value="rej">Rejected</option>
+           
+            
+          </select>
+        <br><br>
+    <input type="submit" name="submit">
+
+</form>
+</center>
+</div>
+<style>
+
+</style>
+{%endblock%}
