@@ -11,8 +11,9 @@
         
     
         <tr>
-            <th>Name:</th>
-            <th>age:</th>
+            <th>applno:</th>
+           <th>Name:</th>
+        <th>age:</th>
             <th>city:</th>
             <th>gender:</th>
             <th>applied date</th>
@@ -28,7 +29,8 @@
        
         {% for row in data %}
         <form method=post  action="/edit/{{ row[1] }}">
-        <tr>    
+        <tr>  
+            <td>{{row[7]}}</td>  
             <td>{{row[0]}}</td>
             <td>{{row[2]}}</td>
             <td>{{row[3]}}</td>
@@ -85,6 +87,7 @@
       background-color: rgb(151, 241, 241);
       color: white;
     }
+    
     </style>
         {%endif%}
     

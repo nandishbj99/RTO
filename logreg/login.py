@@ -6,7 +6,7 @@ import os
 import smtplib 
 from email.mime.text import MIMEText
 import pdfkit
-from datetime import date,timedelta
+from datetime import date,timedelta,datetime
 from flask_wtf.file import FileField, FileRequired
 import random
 import io
@@ -18,7 +18,7 @@ app=Flask(__name__)
 app.config["MONGO_URI"] = "mongodb://localhost:27017/rto"
 mongo = PyMongo(app)
 
-#::::::::::::::::::::::::::::::::::::::::class::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::class::::::::::::::::::::::::::::::::::::::::::::::::
 
 class ChoicesByDb(object):
     def __iter__(self):
@@ -119,9 +119,6 @@ def mail(email,message):
 
 @app.route('/')
 def home():
-    session.pop('logname', None)
-    session.pop('email', None)
-    session.pop('key',None)
     return render_template('home.html')
 
 
@@ -143,20 +140,47 @@ def logout():
     session.pop('email', None)
     session.pop('key',None)
     return(redirect(url_for('home')))
-@app.route('/plot')
-def build_plot():
-    img = io.StringIO()
-    y = [1,2,3,4,5]
-    x = [0,2,1,3,4]
-    plt.plot(x,y)
-    plt.savefig(img, format='png')
-    img.seek(0)
 
-    plot_url = base64.b64encode(img.getvalue())
-    return render_template('plot.html', plot_url=plot_url)
+
+
+
+
+
+
 
 #:::::::::::::::::::::::::::::::::::::::::::::users pages:::::::::::::::::::::::::::::::
-#register page
+
+
+        
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::;login page
+@app.route('/login',methods=['POST','GET'])
+def login():
+    form=mylogform(request.form)
+    if request.method=='POST' and form.validate():
+        useremail=form.email.data
+        upassword=form.password.data
+        with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            try:
+                cur.execute("SELECT email,password,firstname,lastname FROM users WHERE email=? and password=?",(useremail,hashlib.md5(upassword.encode()).hexdigest()))
+                data=cur.fetchone()
+                if data:
+                    session['email']=useremail
+                    session['logname']=data[2]
+                    session['key']="user"
+                    flash('Logged in','success')
+                    return redirect(url_for('userdash'))
+                else:
+                    return redirect(url_for('home'))
+            except:
+                flash("please register first and login","danger")
+                return redirect(url_for('home'))
+
+    return render_template("login_page.html",form=form)
+
+
+
+#::::::::::::::::::::::::::::::::::::::::::::::::::::register page
 @app.route('/register',methods=['POST','GET'])
 def reg():
     form=myform(request.form)
@@ -179,8 +203,36 @@ def reg():
         return redirect(url_for('home'))
     else:
         return render_template('reg.html',form=form)
+#::::::::::::::::::::::::::::::::::::::::::::profile edit
+@app.route('/profileedit',methods=['POST','GET'])
+def profileedit():
+    if request.method=='POST':
+        fname=request.form['fname']
+        lname=request.form['lname']
+        phone=request.form['phone']
+        email=session.get('email')
+        with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            try:
+                cur.execute("UPDATE users SET firstname=?,lastname=?,phone=? WHERE email=?",(fname,lname,phone,email))
+                con.commit()
+                flash("updated successfully","success")
+                return redirect(url_for('userdash'))
+            except:
+                flash("error in updating","warning")
+                return redirect(url_for('userdash'))
+    email=session.get('email')
+    with sqlite3.connect('r.db') as con:
+        cur=con.cursor()
+        data=0
+        try:
+            cur.execute("SELECT * FROM users WHERE email=?",(email,))
+            data=cur.fetchone()
+        except:
+            flash("error","danger")
+    return render_template("profileedit.html",data=data)
 
-#::::::::::::::::::::::::::::::::::::::::::::password change:::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::password change
 @app.route('/password',methods=['POST','GET'])
 def password():
     form=passwordform(request.form)
@@ -208,31 +260,13 @@ def password():
 
 
                 
-        
-#login page
-@app.route('/login',methods=['POST','GET'])
-def login():
-    form=mylogform(request.form)
-    if request.method=='POST' and form.validate():
-        useremail=form.email.data
-        upassword=form.password.data
-        with sqlite3.connect('r.db') as con:
-            cur=con.cursor()
-            try:
-                cur.execute("SELECT email,password,firstname,lastname FROM users WHERE email=? and password=?",(useremail,hashlib.md5(upassword.encode()).hexdigest()))
-                data=cur.fetchone()
-                session['email']=useremail
-                session['logname']=data[2]
-                session['key']="user"
-                flash('Logged in','success')
-                return redirect(url_for('userdash'))
-            except:
-                flash("please register first and login","danger")
-                return redirect(url_for('home'))
+#::::::::::::::::::::::::::::::::::::::::::::USERDASHBOARD
+@app.route('/userdashboard')
+def userdash():
+    return render_template("userdashboard.html")
 
-    return render_template("login_page.html",form=form)
 
-#LLR_DOWNLOADING
+#::::::::::::::::::::::::::::::::::::::::::::::::::;LLR_DOWNLOADING
 @app.route('/llrdownload',methods=['POST','GET'])
 def llrdownload():
     with sqlite3.connect('r.db') as con:
@@ -247,10 +281,20 @@ def llrdownload():
     response.headers['Content-Disposition']='attachment; filename=llr.pdf' #downloadable file 
     return response
     
-        
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::toshow pdff files
+@app.route('/showpdf',methods=['GET','POST'])
+def showpdf():
+    if request.method=='POST':
+        username=request.form['username']
+        user=mongo.db.users.find_one({'username':username})
+        filename=user['filename']
+        return mongo.send_file(filename)
+    return render_template("showpdf.html")
+
+     
    
     
-        
+#:::::::::::::::::::::::::::::::::::::::::::::::::::llr   
 
 @app.route("/llr",methods=["GET","POST"])
 def llrapply():
@@ -275,6 +319,17 @@ def llrapply():
         expirydate = date.today()+timedelta(30)
         typee=request.form['typee']
         rtooffice=form.rtooffice.data
+        with sqlite3.connect('r.db') as con:
+                try:
+                    cur=con.cursor()
+                    cur.execute("SELECT code FROM rtocodes WHERE rto=?",(rtooffice,))
+                    t=cur.fetchone()
+                except:
+                    print("error in selecting codes from database")
+        now=datetime.now()
+        number=random.randint(10000,80000)
+        llrno=t[0]+ now.year + str(number)
+
 
         #files_
         
@@ -287,7 +342,7 @@ def llrapply():
         with sqlite3.connect('r.db') as con:
             try:
                 cur=con.cursor()
-                cur.execute("INSERT INTO llr (firstname,lastname,fathername,email,address,pincode,city,district,state,country,dob,age,gender,phone,bloodgroup,currentdate,expirydate,status,type,rto) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(firstname,lastname,fathersname,email,address,pincode,city,district,state,country,dob,age,gender,phone,bloodgroup,currentdate,expirydate,status,typee,rtooffice))
+                cur.execute("INSERT INTO llr (firstname,lastname,fathername,email,address,pincode,city,district,state,country,dob,age,gender,phone,bloodgroup,currentdate,expirydate,status,type,rto,llrno) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(firstname,lastname,fathersname,email,address,pincode,city,district,state,country,dob,age,gender,phone,bloodgroup,currentdate,expirydate,status,typee,rtooffice,llrno))
                 con.commit()
                 flash("reg successfully")
                 try:
@@ -340,17 +395,8 @@ def llrapply():
         
         return render_template("appllr.html",form=form)
 
-#toshow pdff files
-@app.route('/showpdf',methods=['GET','POST'])
-def showpdf():
-    if request.method=='POST':
-        username=request.form['username']
-        user=mongo.db.users.find_one({'username':username})
-        filename=user['filename']
-        return mongo.send_file(filename)
-    return render_template("showpdf.html")
 
-
+#::::::::::::::::::::::::::::::::::::::::::::::register vehicles
 
 @app.route('/regv', methods=['GET','POST'])
 def regv():
@@ -402,7 +448,7 @@ def regv():
         
         return render_template("regv.html",form=form)
 
-
+#:::::::::::::::::::::::::::::::::::::::::::::::::::status
 @app.route('/status')
 def status():
     try:
@@ -424,10 +470,6 @@ def status():
     
    
     
-#USERDASHBOARD
-@app.route('/userdashboard')
-def userdash():
-    return render_template("userdashboard.html")
 
 #::::::::::::::::::::::::::::::DLR:::::::::::::::::::::::::::::::::::::::::::::::
 @app.route('/dlr',methods=["GET","POST"])
@@ -459,7 +501,7 @@ def dlr():
             flash("Please Apply For LLR First","warning")
             return render_template('userdashboard.html')
 
-
+#:::::::::::::::::::::::::::::::::::::::::::::::;llr download
 @app.route('/dlllr')
 def dlllr():
     acc = "accepted"
@@ -479,7 +521,7 @@ def dlllr():
                 flash("No LLR Found","danger")
 
     return render_template("userdashboard.html")
-
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::dlr download
 @app.route('/dldlr')
 def dldlr():
     with sqlite3.connect('r.db') as con:
@@ -505,7 +547,7 @@ def dldlr():
 
     return render_template("userdashboard.html")
 
-
+#::::::::::::::::::::::::::::::::::::::::::::vehicle register download:::::::
 @app.route('/dlvr',methods = ["POST","GET"])
 def dlvr():
     form=vrdl(request.form)
@@ -532,7 +574,8 @@ def dlvr():
     
                    
 
-
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #:::::::::::::::::::::::::::::::::::::::::::employee:::::::::::::::::::::::::::::::::::::::::
 @app.route('/empdashboard')
 def empdash():
@@ -549,9 +592,10 @@ def emplogin():
         with sqlite3.connect('r.db') as con:
             cur=con.cursor()
             try:
-                if(cur.execute("SELECT * FROM admin WHERE email=? and password=? and secretkey=?",(empemail,emppassword,secretkey))):
+                cur.execute("SELECT * FROM admin WHERE email=? and password=? and secretkey=?",(empemail,emppassword,secretkey))
+                data=cur.fetchone()
+                if data:
                     flash('Logged in','success')
-                    data=cur.fetchone()
                     session['email']=data[0]
                     session['logname']=data[3]
                     session['key']="admin"
@@ -576,7 +620,7 @@ def adminllr():
     with sqlite3.connect('r.db') as con:
             cur=con.cursor()
             try:
-                if(cur.execute("SELECT firstname,email,age,city,gender,currentdate,type FROM llr WHERE status=?",("pending",))):
+                if(cur.execute("SELECT firstname,email,age,city,gender,currentdate,type,applno FROM llr WHERE status=?",("pending",))):
                     data=cur.fetchall()
                     return render_template('adminllr.html',data=data)
                 
@@ -673,7 +717,7 @@ def updatedatabase(email):
             cur=con.cursor()
             
             if request.form['action'] == "accept":
-                cur.execute("UPDATE dlr SET status=?,admindate=?,feedback=?,admindate=? WHERE email=?",("accepted",curdate,feedback,email))
+                cur.execute("UPDATE dlr SET status=?,admindate=?,feedback=? WHERE email=?",("accepted",curdate,feedback,email))
                 
                 con.commit()
                 return redirect(url_for('admindlr'))
@@ -732,7 +776,7 @@ def getvdetails(enginenumber):
 def updatevdatabase(enginenumber):
      zero = "0000"
      curdate = date.today()
-     vno =  random.randint(1000,9999)
+     vno = "KA"+str(random.randint(1000,9999))
      feedback=request.form.get('feedback')
      with sqlite3.connect('r.db') as con:
             cur=con.cursor()
@@ -752,13 +796,22 @@ def adstatus():
     if request.method=='POST':
         date = request.form['date']
         typee=request.form['typee']
-        """with sqlite3.connect('r.db') as con:
+        with sqlite3.connect('r.db') as con:
             cur=con.cursor()
-            cur.execute("SELECT applno,status FROM ? WHERE admindate=?",(typee,date))
-            data=cur.fetchone()      """ 
+            if typee=="llr":
+                cur.execute("SELECT applno,status FROM llr WHERE admindate=?",(date,))
+            elif typee=="dlr":
+                cur.execute("SELECT applno,status FROM dlr WHERE admindate=?",(date,))
+            elif typee=="vehicle":
+                 cur.execute("SELECT applno,status FROM vehicle WHERE admindate=?",(date,))
+            data=cur.fetchall()
+        return render_template("adstatus.html",data=data)
+        
+             
+    data="none"
+    return render_template("adstatus.html",data=data)
 
-    return render_template("adstatus.html")
-
+    
 
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

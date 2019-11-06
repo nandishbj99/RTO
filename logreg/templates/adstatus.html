@@ -2,6 +2,7 @@
 {% block body %}
 <div class="page-wrap">
 <center>
+  {% if data=="none" %}
 <form method="POST" type="">
     <label>Enter The date</label>
     <input type="text" name="date" placeholder="YYYY-MM-DD"><br><br>
@@ -13,19 +14,46 @@
         <option value="vehicle">VEHICLE REGISTRATION</option>
         
       </select>
-      <select name="typee" id="type">
-            <option value="acc">Accepted</option>
-            <option value="rej">Rejected</option>
-           
-            
-          </select>
+    
         <br><br>
     <input type="submit" name="submit">
 
 </form>
+{% else %}
+<form method="POST" type="">
+    <label>Enter The date</label>
+    <input type="text" name="date" placeholder="YYYY-MM-DD"><br><br>
+    <label>Select Type</label>
+    
+<select name="typee" id="type">
+        <option value="llr">LLR</option>
+        <option value="dlr">DLR</option>
+        <option value="vehicle">VEHICLE REGISTRATION</option>
+        
+      </select>
+    
+        <br><br>
+    <input type="submit" name="submit">
+
+</form>
+<br><br>
+<table>
+  <tr>
+    <th><div class="eff-4">application no: </div></th>
+    <th> <div class="eff-4">status </div></th>
+  </tr>
+{% for row in data %}
+<tr>
+  <td>{{ row[0] }}</td>
+  <td>{{ row[1] }}</td>
+  
+</tr>
+{% endfor %}
+</table>
+{% endif %}
 </center>
 </div>
 <style>
 
 </style>
-{%endblock%}
+{% endblock %}
