@@ -467,7 +467,57 @@ def status():
         flash("Please Apply For LLR First!","warning")
         return redirect(url_for('userdash'))
         
-    
+@app.route('/llrstatus')
+def llrstatus():
+    try:
+        with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            cur.execute("SELECT status FROM llr WHERE email = ?",(session.get('email'),))
+            st=cur.fetchone()
+            if st[0] == "pending":
+                return render_template("statuspending.html") 
+            elif st[0] == "declined":
+                return render_template("statusdeclined.html")
+            else:
+                return render_template("statusaccepted.html")
+            con.close()
+    except:
+        flash("Please Apply For LLR First!","warning")
+        return redirect(url_for('userdash'))
+@app.route('/dlrstatus')
+def dlrstatus():
+    try:
+        with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            cur.execute("SELECT status FROM dlr WHERE email = ?",(session.get('email'),))
+            st=cur.fetchone()
+            if st[0] == "pending":
+                return render_template("statuspending.html") 
+            elif st[0] == "declined":
+                return render_template("statusdeclined.html")
+            else:
+                return render_template("statusaccepted.html")
+            con.close()
+    except:
+        flash("Please Apply For DLR First!","warning")
+        return redirect(url_for('userdash'))
+@app.route('/vrstatus')
+def vrstatus():
+    try:
+        with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            cur.execute("SELECT status FROM vehicle WHERE email = ?",(session.get('email'),))
+            st=cur.fetchone()
+            if st[0] == "pending":
+                return render_template("statuspending.html") 
+            elif st[0] == "declined":
+                return render_template("statusdeclined.html")
+            else:
+                return render_template("statusaccepted.html")
+            con.close()
+    except:
+        flash("Please Apply For VR First!","warning")
+        return redirect(url_for('userdash'))
    
     
 
