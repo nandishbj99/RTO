@@ -484,6 +484,8 @@ def llrstatus():
     except:
         flash("Please Apply For LLR First!","warning")
         return redirect(url_for('userdash'))
+
+        
 @app.route('/dlrstatus')
 def dlrstatus():
     try:
