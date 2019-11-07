@@ -485,7 +485,7 @@ def llrstatus():
         flash("Please Apply For LLR First!","warning")
         return redirect(url_for('userdash'))
 
-        
+
 @app.route('/dlrstatus')
 def dlrstatus():
     try:
@@ -845,6 +845,8 @@ def updatevdatabase(enginenumber):
 
 @app.route('/adstatus',methods=['GET','POST'])
 def adstatus():
+    acc = "accepted"
+    rej = "rejected"
     if request.method=='POST':
         date = request.form['date']
         typee=request.form['typee']
@@ -852,12 +854,29 @@ def adstatus():
             cur=con.cursor()
             if typee=="llr":
                 cur.execute("SELECT applno,status FROM llr WHERE admindate=?",(date,))
+                cur.execute("SELECT count(applno) FROM llr WHERE admindate=? and status=?",(date,acc))
+                data1 = cur.fetchall()
+                cur.execute("SELECT count(applno) FROM llr WHERE admindate=? and status=?",(date,rej))
+                data2 = cur.fetchall()
+                data=cur.fetchall()
+                return render_template("adstatus.html",data=data,ca=data1,cr=data2)
             elif typee=="dlr":
                 cur.execute("SELECT applno,status FROM dlr WHERE admindate=?",(date,))
+                cur.execute("SELECT count(applno) FROM llr WHERE admindate=? and status=?",(date,acc))
+                data1 = cur.fetchall()
+                cur.execute("SELECT count(applno) FROM llr WHERE admindate=? and status=?",(date,rej))
+                data2 = cur.fetchall()
+                data=cur.fetchall()
+                return render_template("adstatus.html",data=data,ca=data1,cr=data2)
             elif typee=="vehicle":
                  cur.execute("SELECT applno,status FROM vehicle WHERE admindate=?",(date,))
-            data=cur.fetchall()
-        return render_template("adstatus.html",data=data)
+                 cur.execute("SELECT count(applno) FROM llr WHERE admindate=? and status=?",(date,acc))
+                 data1 = cur.fetchall()
+                 cur.execute("SELECT count(applno) FROM llr WHERE admindate=? and status=?",(date,rej))
+                 data2 = cur.fetchall()
+                 data=cur.fetchall()
+                 return render_template("adstatus.html",data=data,ca=data1,cr=data2)
+        
         
              
     data="none"
