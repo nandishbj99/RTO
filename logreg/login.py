@@ -339,7 +339,7 @@ def llrapply():
                     print("error in selecting codes from database")
         now=datetime.now()
         number=random.randint(10000,80000)
-        llrno=t[0]+ now.year + str(number)
+        llrno=t[0]+ str(now.year) + str(number)
 
 
         #files_
