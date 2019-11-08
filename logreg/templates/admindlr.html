@@ -34,13 +34,13 @@
             <td>{{row[5]}}</td>
             <td>{{row[6]}}</td>
 
-            <td><a href="/aadhar/{{ row[1] }}"><button type="button" class="btn-default">aadhar</button></a></td>
-            <td><a href="/voterid/{{ row[1] }}"><button type="button" class="btn-success">voterid</button></a></td>
-            <td><a href="/sslc/{{ row[1] }}"><button type="button" class="btn-primary">sslc</button></a></td>
-            <td><a href="/details/{{ row[1] }}"><button type="button" class="btn-danger">details</button></a></td>
+            <td><a href="/aadhar/{{ row[1] }}"><button type="button" class="button button1">Aadhar</button></a></td>
+            <td><a href="/voterid/{{ row[1] }}"><button type="button" class="button button2">Voterid</button></a></td>
+            <td><a href="/sslc/{{ row[1] }}"><button type="button" class="button button1">SSLC</button></a></td>
+            <td><a href="/details/{{ row[1] }}"><button type="button" class="button button2">Details</button></a></td>
             <td><input type="text" name="feedback"></td>
-            <td><input type="submit" name="action" class="button button1" value="accept"></td>
-            <td><input type="submit" name="action" class="btn-warning" value="reject"></td>
+            <td><input type="submit" name="action" class="button button3" value="Accept"></td>
+            <td><input type="submit" name="action" class="button button4" value="Reject"></td>
 
         </tr>
 {% endfor %}

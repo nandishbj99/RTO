@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
+<link rel="stylesheet" href="{{ url_for('static',filename='styles/myform.css')}}" type="text/css">
         <div class="container">
             <h1>Enter Details:</h1><br><br>
             {% from "formhelper.html" import render_field %}
@@ -94,18 +95,18 @@
 <table>
   <tr>
     <td>Upload SideView:</td>
-    <td> <input type="file" name="sideview"></td>
+    <td> <input type="file" name="sideview" class="button button2"></td>
   </tr>
   <tr>
     <td>Upload FrontView:</td>
-    <td> <input type="file" name="frontview"></td>
+    <td> <input type="file" name="frontview" class="button button2"></td>
   </tr>
   <tr>
     <td>Upload BackView:</td>
-    <td>   <input type="file" name="backview"></td>
+    <td>   <input type="file" name="backview" class="button button2"></td>
   </tr>
 </table>
-<input type="submit" value="submit">
+<input type="submit" value="Submit" class="button button1">
 
 
 
