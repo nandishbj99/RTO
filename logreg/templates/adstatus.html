@@ -22,7 +22,7 @@
 {% else %}
 <form method="POST" type="">
     <label>Enter The date</label>
-    <input type="text" name="date" placeholder="YYYY-MM-DD"><br><br>
+    <input type="text" name="date" placeholder="YYYY-MM-DD" class="button button3"><br><br>
     <label>Select Type</label>
     
 <select name="typee" id="type">
@@ -33,7 +33,7 @@
       </select>
     
         <br><br>
-    <input type="submit" name="submit">
+    <input type="submit" name="Submit" class="button button1">
 
 </form>
 <br><br>
@@ -51,8 +51,7 @@
 {% endfor %}
 </table>
 
-Total Accepted : {{ data1 }}<br>
-Total Rejected : {{ data2 }}
+
 {% endif %}
 </center>
 </div>
