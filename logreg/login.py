@@ -127,6 +127,17 @@ def home():
 def about():
         return render_template('about.html')
 
+@app.route('/polc')
+def pol():
+        return render_template('pollcontrol.html')
+
+@app.route('/safety')
+def safe():
+        return render_template('roadsafety.html')
+        
+@app.route('/act')
+def act():
+        return render_template('actsrules.html')
 
 #contact page
 @app.route('/contact')
