@@ -5,7 +5,7 @@
 {%if data%}
 <div class="container">
     <div class="row">
-<div class="col-md-8">
+
         
     <table> 
         
@@ -13,9 +13,8 @@
         <tr>
             <th>applno:</th>
            <th>Name:</th>
-        <th>age:</th>
-            <th>city:</th>
-            <th>gender:</th>
+       
+           
             <th>applied date</th>
             <th>type:</th>
             <th>aadhar</th>
@@ -23,6 +22,8 @@
             <th>sslc</th>
             <th>details</th>
             <th>feedback</th>
+            <th> </th>
+            <th> </th>
 
 
         </tr>
@@ -32,9 +33,7 @@
         <tr>  
             <td>{{row[7]}}</td>  
             <td>{{row[0]}}</td>
-            <td>{{row[2]}}</td>
-            <td>{{row[3]}}</td>
-            <td>{{row[4]}}</td>
+         
             <td>{{row[5]}}</td>
             <td>{{row[6]}}</td>
 
@@ -52,7 +51,7 @@
     </table>
 
     
-</div>
+
 
 
 </div>
@@ -61,34 +60,54 @@
     <br><br>
     <p> No requests for LLR</p>
 </center>
-<style>
-    .button {
-      background-color: rgb(151, 241, 241); /* Green */
-      border: none;
-      color: white;
-      padding: 16px 32px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 16px;
-      margin: 4px 2px;
-      -webkit-transition-duration: 0.4s; /* Safari */
-      transition-duration: 0.4s;
-      cursor: pointer;
-    }
-    
-    .button1 {
-      background-color: white; 
-      color: black; 
-      border: 2px solid rgb(151, 241, 241);
-    }
-    
-    .button1:hover {
-      background-color: rgb(151, 241, 241);
-      color: white;
-    }
-    
-    </style>
+
         {%endif%}
-    
+        <style>
+            .button {
+              background-color: rgb(151, 241, 241); /* Green */
+              border: none;
+              color: white;
+              padding: 16px 32px;
+              text-align: center;
+              text-decoration: none;
+              display: inline-block;
+              font-size: 16px;
+              margin: 4px 2px;
+              -webkit-transition-duration: 0.4s; /* Safari */
+              transition-duration: 0.4s;
+              cursor: pointer;
+            }
+            
+            .button1 {
+              background-color: white; 
+              color: black; 
+              border: 2px solid rgb(151, 241, 241);
+            }
+            
+            .button1:hover {
+              background-color: rgb(151, 241, 241);
+              color: white;
+            }
+            table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+        }
+
+        th {
+          border: 5px solid #924fdf;
+          text-align: center;
+          background-color: rgb(151, 241, 241);
+          padding: 8px;
+        }
+        td{
+          border: 5px solid #dddddd;
+          text-align: center;
+          padding: 8px;
+        }
+        
+        tr:nth-child(even) {
+          background-color: #dddddd;
+        }
+            </style>   
 {% endblock%}

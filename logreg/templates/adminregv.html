@@ -5,12 +5,14 @@
 {%if data%}
 <div class="container">
     <div class="row">
-<div class="col-md-8">
+
        
     <table>
         <tr>
             <th>Name</th>
             <th>Engine Number</th>
+            <th> </th>
+            <th> </th>
         </tr>
        
         {% for row in data %}
@@ -34,7 +36,7 @@
 {%endif%}
 
 
-</div>
+
 <style>
     .button {
       background-color: rgb(151, 241, 241); /* Green */
@@ -71,6 +73,27 @@
     background-color: rgb(233, 23, 68);
     color: white;
   }
+  table {
+                  font-family: arial, sans-serif;
+                  border-collapse: collapse;
+                  width: 100%;
+                }
+        
+                th {
+                  border: 5px solid #924fdf;
+                  text-align: center;
+                  background-color: rgb(151, 241, 241);
+                  padding: 8px;
+                }
+                td{
+                  border: 5px solid #dddddd;
+                  text-align: center;
+                  padding: 8px;
+                }
+                
+                tr:nth-child(even) {
+                  background-color: #dddddd;
+                }
 
 
   /*TABLES STYLES*/
