@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<center><h4><b>vehicle registration Requests</b></h4></center>
+<center><h4><b>Vehicle Registration Requests</b></h4></center>
 {%if data%}
 <div class="container">
     <div class="row">
@@ -20,12 +20,12 @@
         <tr>
             <td>{{row[0]}}</td>
             <td>{{row[5]}}</td>
-            <td><a href="/vehicledetails/{{ row[5] }}"><button type="button" class="btn-danger">Details</button></a></td>
-            <td><a href="/frontview/{{ row[5] }}"><button type="button" class="btn-default">Front View</button></a></td>
-            <td><a href="/sideview/{{ row[5] }}"><button type="button" class="btn-success">Side View</button></a></td>
-            <td><a href="/backview/{{ row[5] }}"><button type="button" class="btn-primary">Back View</button></a></td>      
-            <td><input type="submit" name="action" class="button button1" value="accept"></td>
-            <td><input type="submit" name="action" class="button button2" value="reject"></td>
+            <td><a href="/vehicledetails/{{ row[5] }}"><button type="button" class="button button1">Details</button></a></td>
+            <td><a href="/frontview/{{ row[5] }}"><button type="button" class="button button2">Front View</button></a></td>
+            <td><a href="/sideview/{{ row[5] }}"><button type="button" class="button button1">Side View</button></a></td>
+            <td><a href="/backview/{{ row[5] }}"><button type="button" class="button button2">Back View</button></a></td>      
+            <td><input type="submit" name="action" class="button button3" value="Accept"></td>
+            <td><input type="submit" name="action" class="button button4" value="Reject"></td>
         </tr>
 {% endfor %}
     </table>

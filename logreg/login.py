@@ -37,7 +37,7 @@ class myform(Form):
     password=PasswordField('NewPassword',[validators.DataRequired(),validators.EqualTo('confirm', message='Passwords must match')])
     confirm=PasswordField('Confirm Password')
     lastname=StringField('Lastname',[validators.Length(min=1,max=10)])
-    phone=IntegerField("Phone")
+    phone=IntegerField("Phone",[validators.Length(min=10,max=10)])
 
 #validating the LLR_user deatils
 class llr_user(Form):
@@ -182,10 +182,12 @@ def login():
                     flash('Logged in','success')
                     return redirect(url_for('userdash'))
                 else:
-                    return redirect(url_for('home'))
+                    
+                    flash("please register first and login","danger")
+                    return redirect(url_for('login'))
             except:
                 flash("please register first and login","danger")
-                return redirect(url_for('home'))
+                return redirect(url_for('login'))
 
     return render_template("login_page.html",form=form)
 

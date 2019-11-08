@@ -131,7 +131,7 @@
           </div>
         <input type="submit" value="submit">
         {% else %}
-        <h1>you already entered your details,select another license type to apply </h1><br><br>
+        <h3>You have already entered all your details, Select another license type to apply :</h3><br><br>
 <div class="row">
   <div class="col-md-4">
 </div>
@@ -140,35 +140,35 @@
            
             <select class="form-control" name="typee">
               {% if t[0] == "lmv" %}
-              <option value="lmv:mcwg">mcwg</option>
-              <option value="lmv:tractor">tractor</option>
-              <option value="lmv:mcwg:tractor">mcwg+tractor</option>
+              <option value="lmv:mcwg">MCWG</option>
+              <option value="lmv:tractor">TRACTOR</option>
+              <option value="lmv:mcwg:tractor">MCWG+TRACTOR</option>
               {% elif t[0] == "mcwg" %}
-              <option value="lmv:mcwg">lmv</option>
-              <option value="lmv:tractor">tractor</option>
-              <option value="lmv:mcwg:tractor">lmv+tractor</option>
+              <option value="lmv:mcwg">LMV</option>
+              <option value="lmv:tractor">TRACTOR</option>
+              <option value="lmv:mcwg:tractor">LMV+TRACTOR</option>
               {% elif t[0] == "tractor" %}
-              <option value="lmv:tractor">lmv</option>
-              <option value="mcwg:tractor">mcwg</option>
-              <option value="lmv:mcwg">lmv+mcwg</option>
+              <option value="lmv:tractor">LMV</option>
+              <option value="mcwg:tractor">MCWG</option>
+              <option value="lmv:mcwg">LMV+MCWG</option>
               {% elif t[0] == "lmv:mcwg" %}
-              <option value="lmv:mcwg:tractor">tractor</option>
+              <option value="lmv:mcwg:tractor">TRACTOR</option>
               {% elif t[0] == "lmv:tractor" %}
-              <option value="lmv:mcwg:tractor">mcwg</option>
+              <option value="lmv:mcwg:tractor">MCWG</option>
               {% elif t[0] == "mcwg:tractor" %}
-              <option value="lmv:mcwg:tractor">lmv</option>
+              <option value="lmv:mcwg:tractor">LMV</option>
               {% elif t[0] == "none" %}
-              <option value="lmv">lmv</option>
-              <option value="mcwg">mcwg</option>
-              <option value="tractor">tractor</option>
-              <option value="lmv:mcwg">lmv+mcwg</option>
-              <option value="lmv:tractor">lmv+tractor</option>
-              <option value="mcwg:trator">mcwg+tractor</option>
+              <option value="lmv">LMV</option>
+              <option value="mcwg">MCWG</option>
+              <option value="tractor">TRACTOR</option>
+              <option value="lmv:mcwg">LMV+MCWG</option>
+              <option value="lmv:tractor">LMV+TRACTOR</option>
+              <option value="mcwg:trator">MCWG+TRACTOR</option>
 
-              <option value="lmv:mcwg:tractor">lmv+mcwg+tractor</option>
+              <option value="lmv:mcwg:tractor">LMV+MCWG+TRACTOR</option>
               {% endif %}
             </select></br>
-            <input type="submit" value="submit">
+            <input type="submit" value="Submit" class="button button1">
    </div>
   
   
@@ -181,7 +181,43 @@
           </div>
         </div>
         </div>
-
+        <style>
+          .button {
+            background-color: rgb(151, 241, 241); /* Green */
+            border: none;
+            color: white;
+            padding: 16px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            -webkit-transition-duration: 0.4s; /* Safari */
+            transition-duration: 0.4s;
+            cursor: pointer;
+          }
+          
+          .button1 {
+            background-color: white; 
+            color: black; 
+            border: 2px solid rgb(151, 241, 241);
+          }
+          
+          .button1:hover {
+            background-color: rgb(151, 241, 241);
+            color: white;
+          }
+          .button2 {
+          background-color: white; 
+          color: black; 
+          border: 2px solid #008CBA;
+        }
+        
+        .button2:hover {
+          background-color: #008CBA;
+          color: white;
+        }
+          </style>
         
         
   {% endblock %}
