@@ -34,10 +34,10 @@ class ChoicesByDb(object):
 class myform(Form):
     firstname=StringField('Firstname',[validators.Length(min=3,max=12)])
     email=TextField('Email',[validators.Email(),validators.DataRequired()])
-    password=PasswordField('NewPassword',[validators.DataRequired(),validators.EqualTo('confirm', message='Passwords must match')])
+    password=PasswordField('NewPassword',[validators.DataRequired(),validators.EqualTo('confirm', message='Password Is Not Matching')])
     confirm=PasswordField('Confirm Password')
     lastname=StringField('Lastname',[validators.Length(min=1,max=10)])
-    phone=IntegerField("Phone")
+    phone=TextField("Phone",[validators.Length(min=1,max=10)])
 
 #validating the LLR_user deatils
 class llr_user(Form):
@@ -208,12 +208,12 @@ def reg():
                 cur=con.cursor()
                 cur.execute("INSERT INTO users (email,password,firstname,lastname,phone) VALUES (?,?,?,?,?)",(email,hashlib.md5(password.encode()).hexdigest(),fname,lname,phone))
                 con.commit()
-                flash("reg successfully")
+                flash("Registered Successfully",'success')
             except:
                 con.rollback()
                 flash("error occur")
         con.close()
-        return redirect(url_for('home'))
+        return redirect(url_for('reg'))
     else:
         return render_template('reg.html',form=form)
 #::::::::::::::::::::::::::::::::::::::::::::profile edit
