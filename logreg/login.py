@@ -331,7 +331,7 @@ def showpdf():
 @app.route("/llr",methods=["GET","POST"])
 def llrapply():
     form=llr_user(request.form)
-    if request.method == 'POST' and form.validate():
+    if(request.method =='POST' and form.validate()):
         firstname=form.firstname.data
         lastname=form.lastname.data
         fathersname=form.fathersname.data
@@ -395,19 +395,8 @@ def llrapply():
                 
         return redirect(url_for('userdash'))
     else:
-        if request.method == 'POST' and form.validate():
-            with sqlite3.connect('r.db') as con:
-                cur=con.cursor()
-                
-                typee=request.form.get('typee')
-                email=session.get('email')
-                cur.execute("UPDATE llr SET type=? WHERE email=?",(typee,email))
-                con.commit()
-                    
-                flash("update successfully")
-            return redirect(url_for('userdash'))
-        else:
-            with sqlite3.connect('r.db') as con:
+        
+        with sqlite3.connect('r.db') as con:
                 try:
                     cur=con.cursor()
                     if(cur.execute("SELECT type FROM llr WHERE email=?",(session.get('email'),))):
@@ -417,18 +406,46 @@ def llrapply():
                                 flash("you already registered for all type of licences")
                                 return redirect(url_for('userdash'))
                             else:
-                                return render_template("appllr.html",form=form,t=t)
+                                return redirect(url_for('oldllrupdate'))
                         else:
-                            t="none"
-                            return render_template("appllr.html",form=form,t=t)
+                            
+                            return render_template("appllr.html",form=form)
                 except:
                     flash("please retry ")
                     return redirect(url_for('userdash'))
 
-        
-        
-        return render_template("appllr.html",form=form)
-
+#::::::::::::::::::::::::::::::::::::::::::OLD LLR update:::::::::::::::::;
+@app.route('/oldllrupdate',methods=['GET','POST'])
+def oldllrupdate():
+    if request.method == 'POST':
+        with sqlite3.connect('r.db') as con:
+            cur=con.cursor()
+            typee=request.form.get('typee')
+            email=session.get('email')
+            cur.execute("UPDATE llr SET type=? WHERE email=?",(typee,email))
+            con.commit()
+                    
+            flash("update successfully")
+        return redirect(url_for('userdash'))
+    with sqlite3.connect('r.db') as con:
+        try:
+            cur=con.cursor()
+            cur.execute("SELECT type FROM llr WHERE email=?",(session.get('email'),))
+            t=cur.fetchone()
+            if t:
+                if(t[0]=="lmv:mcwg:tractor"):
+                    flash("you already registered for all type of licences")
+                    return redirect(url_for('userdash'))
+                else:
+                    return render_template("oldllrupdate.html",t=t)
+            else:
+                flash("please retry ")
+                return redirect(url_for('userdash'))
+        except:
+            flash("please retry ")
+            return redirect(url_for('userdash'))
+                
+    return redirect(url_for('userdash'))
 
 #::::::::::::::::::::::::::::::::::::::::::::::register vehicles
 
@@ -759,9 +776,10 @@ def getdetails(email):
 @app.route('/edit/<email>',methods=['GET','POST'])
 def updatellrdatabase(email):
      curdate = date.today()
-     accepted = "Your LLR Has Been Accepted"
-     rejected = "Your LLR Has Been Rejected"
      feedback=request.form.get('feedback')
+     accepted = "Your LLR Has Been Accepted"
+     rejected = "Your LLR Has Been Rejected because"+feedback
+     
      with sqlite3.connect('r.db') as con:
             cur=con.cursor()
             
@@ -798,6 +816,8 @@ def admindlr():
 def updatedatabase(email):
      feedback=request.form.get('feedback')
      curdate = date.today()
+     accepted = "Your DLR Has Been Accepted"
+     rejected = "Your DLR Has Been Rejected:"+feedback
      with sqlite3.connect('r.db') as con:
             cur=con.cursor()
             
@@ -805,10 +825,12 @@ def updatedatabase(email):
                 cur.execute("UPDATE dlr SET status=?,admindate=?,feedback=? WHERE email=?",("accepted",curdate,feedback,email))
                 
                 con.commit()
+                mail(email,accepted)
                 return redirect(url_for('admindlr'))
             else:
                 cur.execute("UPDATE dlr SET status=?,admindate=?,feedback=? WHERE email=?",("rejected",curdate,feedback,email))
                 con.commit()
+                mail(email,rejected)
                 return redirect(url_for('admindlr'))
 
 ########################################EMP REGV####################################################
@@ -862,17 +884,22 @@ def updatevdatabase(enginenumber):
      zero = "0000"
      curdate = date.today()
      vno = "KA"+str(random.randint(1000,9999))
-     feedback=request.form.get('feedback')
+     
+     email = session.get('email')
+     accepted = "Your vehicle registration request Has Been Accepted,your enginenumber is:"+str(enginenumber)
+     rejected = "Your vehicle registration request Has Been Rejected:your enginenumber is:"+str(enginenumber)
      with sqlite3.connect('r.db') as con:
             cur=con.cursor()
             
             if request.form['action'] == "accept":
                 cur.execute("UPDATE vehicle SET status=?,admindate=?,vehiclenumber=? WHERE enginenumber=?",("accepted",curdate,vno,enginenumber))
                 con.commit()
+                mail(email,accepted)
                 return redirect(url_for('adminregv'))
             else:
                 cur.execute("UPDATE vehicle SET status=?,admindate=?,vehiclenumber=? WHERE enginenumber=?",("rejected",curdate,zero,enginenumber))
                 con.commit()
+                mail(email,rejected)
                 return redirect(url_for('adminregv'))
 #################################################EMP STATUS##############################################
 

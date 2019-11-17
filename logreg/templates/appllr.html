@@ -4,7 +4,7 @@
            
             {% from "formhelper.html" import render_field %}
             <form method=post  action="" enctype=multipart/form-data>
-              {% if t == "none" %}
+              
               <h1>Enter Details:</h1><br><br>
           <div class="row">
               <div class="col-md-4">
@@ -130,57 +130,12 @@
 
           </div>
         <input type="submit" value="submit">
-        {% else %}
-        <h3>You have already entered all your details, Select another license type to apply :</h3><br><br>
-<div class="row">
-  <div class="col-md-4">
-</div>
-<div class="col-md-4">
-        <div class="form-group input-group-lg">
-           
-            <select class="form-control" name="typee">
-              {% if t[0] == "lmv" %}
-              <option value="lmv:mcwg">MCWG</option>
-              <option value="lmv:tractor">TRACTOR</option>
-              <option value="lmv:mcwg:tractor">MCWG+TRACTOR</option>
-              {% elif t[0] == "mcwg" %}
-              <option value="lmv:mcwg">LMV</option>
-              <option value="lmv:tractor">TRACTOR</option>
-              <option value="lmv:mcwg:tractor">LMV+TRACTOR</option>
-              {% elif t[0] == "tractor" %}
-              <option value="lmv:tractor">LMV</option>
-              <option value="mcwg:tractor">MCWG</option>
-              <option value="lmv:mcwg">LMV+MCWG</option>
-              {% elif t[0] == "lmv:mcwg" %}
-              <option value="lmv:mcwg:tractor">TRACTOR</option>
-              {% elif t[0] == "lmv:tractor" %}
-              <option value="lmv:mcwg:tractor">MCWG</option>
-              {% elif t[0] == "mcwg:tractor" %}
-              <option value="lmv:mcwg:tractor">LMV</option>
-              {% elif t[0] == "none" %}
-              <option value="lmv">LMV</option>
-              <option value="mcwg">MCWG</option>
-              <option value="tractor">TRACTOR</option>
-              <option value="lmv:mcwg">LMV+MCWG</option>
-              <option value="lmv:tractor">LMV+TRACTOR</option>
-              <option value="mcwg:trator">MCWG+TRACTOR</option>
+        
 
-              <option value="lmv:mcwg:tractor">LMV+MCWG+TRACTOR</option>
-              {% endif %}
-            </select></br>
-            <input type="submit" value="Submit" class="button button1">
-   </div>
-  
-  
-  </div>
-</div>
-</div>
 
-   {% endif %}
           </form>
           </div>
-        </div>
-        </div>
+        
         <style>
           .button {
             background-color: rgb(151, 241, 241); /* Green */
