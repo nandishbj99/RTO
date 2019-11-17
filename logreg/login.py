@@ -101,7 +101,7 @@ class adstatus(Form):
 #:::::::::::::::::::::::::::::::::entry main pages::::::::::::::::::::::::::::::::::::::
 #home page
 
-def mail(email,message):
+"""def mail(email,message):
     msg=MIMEText(message)
     msg['From']="karnatakartostatus@gmail.com"
     msg['To']=email
@@ -110,7 +110,26 @@ def mail(email,message):
     SERVER.starttls()
     SERVER.login("karnatakartostatus@gmail.com","lenovoasus")
     SERVER.send_message(msg)
-    SERVER.quit()
+    SERVER.quit()"""
+
+
+def mail(email,message):
+    smtp_ssl_host = 'smtp.mail.yahoo.com'
+    smtp_ssl_port = 465
+    username = 'karnatakartostatus@yahoo.com'
+    password = 'vnty ojfh flkc ctqp'
+    sender = 'karnatakartostatus@yahoo.com'
+    targets = email
+
+    msg = MIMEText(message)
+    msg['Subject'] = 'RTO Update'
+    msg['From'] = sender
+    msg['To'] = ', '.join(targets)
+
+    server = smtplib.SMTP_SSL(smtp_ssl_host, smtp_ssl_port)
+    server.login(username, password)
+    server.sendmail(sender, targets, msg.as_string())
+    server.quit()
 
 
 
@@ -339,6 +358,7 @@ def llrapply():
                     t=cur.fetchone()
                 except:
                     print("error in selecting codes from database")
+        con.close()
         now=datetime.now()
         number=random.randint(10000,80000)
         llrno=t[0]+ str(now.year) + str(number)
@@ -357,7 +377,7 @@ def llrapply():
                 cur=con.cursor()
                 cur.execute("INSERT INTO llr (firstname,lastname,fathername,email,address,pincode,city,district,state,country,dob,age,gender,phone,bloodgroup,currentdate,expirydate,status,type,rto,llrno) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(firstname,lastname,fathersname,email,address,pincode,city,district,state,country,dob,age,gender,phone,bloodgroup,currentdate,expirydate,status,typee,rtooffice,llrno))
                 con.commit()
-                flash("reg successfully")
+                
                 try:
                     mongo.save_file(aadharpdf.filename,aadharpdf)
                     mongo.save_file(sslcpdf.filename,sslcpdf)
@@ -365,8 +385,9 @@ def llrapply():
                     mongo.save_file(signature.filename,signature)
                     mongo.save_file(photo.filename,photo)
                     mongo.db.users.insert({'email':email,'aadharpdf':aadharpdf.filename,'sslcpdf':sslcpdf.filename,'voterid':voteridpdf.filename,'signature':signature.filename,'photo':photo.filename})
+                    flash("reg successfully")
                 except:
-                    print("mongo error")
+                    flash("mongo error")
             except:
                 con.rollback()
                 flash("error occur")
@@ -374,7 +395,7 @@ def llrapply():
                 
         return redirect(url_for('userdash'))
     else:
-        if request.method == 'POST':
+        if request.method == 'POST' and form.validate():
             with sqlite3.connect('r.db') as con:
                 cur=con.cursor()
                 
