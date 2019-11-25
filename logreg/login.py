@@ -87,8 +87,9 @@ class passwordform(Form):
     password=PasswordField('NEW password',[validators.DataRequired(),validators.EqualTo('confirm', message='Passwords must match')])
     confirm=PasswordField('Confirm Password')
 class mylogform(Form):
-    email=TextField('Email',[validators.Email(),validators.DataRequired()])
-    password=PasswordField('Password',[validators.DataRequired()])
+    email=TextField('Email',[validators.Email(),validators.DataRequired()],render_kw={"placeholder": "Email"})
+    password=PasswordField('Password',[validators.DataRequired()],render_kw={"placeholder": "Password"})
+    
 app.secret_key='nandish'
 class emplogform(Form):
     email=TextField('Email',[validators.Email(),validators.DataRequired()])

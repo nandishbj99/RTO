@@ -1,64 +1,71 @@
-{% extends "layout.html" %}
-{% block body %}
 
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Login Page</title>
+   <!--Made with love by Mutiullah Samim -->
+   <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+	<!--Bootsrap 4 CDN-->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    
+    <!--Fontawesome CDN-->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
+	<!--Custom styles-->
+  <link rel="stylesheet" href="{{ url_for('static',filename='styles/myformm.css')}}" type="text/css">
+</head>
+<body>
+    {% from "formhelp.html" import render_field %}
 <div class="container">
-  <div class="row">
-      <div class="col-md-4">
-      </div>
-    <div class="col-md-4">
-
-<img class="mb-4" width="350" height="350" src="{{ url_for('static',filename='user_login.png')}}" >
-<h1></h1>
-{% from "formhelper.html" import render_field %}
-<form method=post  action="">
-<div class="form-group input-group-lg">
-  {{render_field(form.email, class_="form-control")}}
+	<div class="d-flex justify-content-center h-100">
+		<div class="card">
+			<div class="card-header">
+				<h3>Sign In</h3>
+				<div class="d-flex justify-content-end social_icon">
+					<span><i class="fab fa-facebook-square"></i></span>
+					<span><i class="fab fa-google-plus-square"></i></span>
+					<span><i class="fab fa-twitter-square"></i></span>
+				</div>
+			</div>
+			<div class="card-body">
+          <form method=post  action="">
+					<div class="input-group form-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="fas fa-user"></i></span>
+						</div>
+            {{render_field(form.email, class_="form-control")}}
+						
+					</div>
+					<div class="input-group form-group">
+						<div class="input-group-prepend">
+							<span class="input-group-text"><i class="fas fa-key"></i></span>
+						</div>
+            {{render_field(form.password, class_="form-control")}}
+					</div>
+					<div class="row align-items-center remember">
+						<input type="checkbox">Remember Me
+					</div>
+					<div class="form-group">
+            <input type="submit" value="Login" class="btn float-right login_btn">
+            
+					</div>
+				</form>
+			</div>
+			<div class="card-footer">
+				<div class="d-flex justify-content-center links">
+					Don't have an account?<a href="/register">Sign Up</a>
+				</div>
+				<div class="d-flex justify-content-center">
+					<a href="/password">Forgot your password?</a>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
-  <div class="form-group input-group-lg">
-      {{render_field(form.password, class_="form-control")}}
-    </div>
-      <input type="submit" name="login" value="Login" class="button button1"></br>
-      <a href="/register"><button type="button" class="button button2">Sign-Up</button></a>
+</body>
+</html>
 
-  </form>
-  </div>
-</div>
-</div>
-<style>
-  .button {
-    background-color: rgb(151, 241, 241); /* Green */
-    border: none;
-    color: white;
-    padding: 16px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    -webkit-transition-duration: 0.4s; /* Safari */
-    transition-duration: 0.4s;
-    cursor: pointer;
-  }
-  
-  .button1 {
-    background-color: white; 
-    color: black; 
-    border: 2px solid rgb(151, 241, 241);
-  }
-  
-  .button1:hover {
-    background-color: rgb(151, 241, 241);
-    color: white;
-  }
-  .button2 {
-  background-color: white; 
-  color: black; 
-  border: 2px solid #008CBA;
-}
-
-.button2:hover {
-  background-color: #008CBA;
-  color: white;
-}
-  </style>
-{% endblock %}
