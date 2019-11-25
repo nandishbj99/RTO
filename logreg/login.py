@@ -598,7 +598,8 @@ def vrstatus():
             if st[0] == "pending":
                 return render_template("statuspending.html") 
             elif st[0] == "rejected":
-                return render_template("statusdeclined.html")
+                data=""
+                return render_template("statusdeclined.html",data=data)
             else:
                 return render_template("statusaccepted.html")
             con.close()
