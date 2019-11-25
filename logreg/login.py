@@ -558,12 +558,12 @@ def llrstatus():
     try:
         with sqlite3.connect('r.db') as con:
             cur=con.cursor()
-            cur.execute("SELECT status FROM llr WHERE email = ?",(session.get('email'),))
+            cur.execute("SELECT status,feedback FROM llr WHERE email = ?",(session.get('email'),))
             st=cur.fetchone()
             if st[0] == "pending":
                 return render_template("statuspending.html") 
             elif st[0] == "rejected":
-                return render_template("statusdeclined.html")
+                return render_template("statusdeclined.html",data=st[1])
             else:
                 return render_template("statusaccepted.html")
             con.close()
@@ -576,12 +576,12 @@ def dlrstatus():
     try:
         with sqlite3.connect('r.db') as con:
             cur=con.cursor()
-            cur.execute("SELECT status FROM dlr WHERE email = ?",(session.get('email'),))
+            cur.execute("SELECT status,feedback FROM dlr WHERE email = ?",(session.get('email'),))
             st=cur.fetchone()
             if st[0] == "pending":
                 return render_template("statuspending.html") 
             elif st[0] == "rejected":
-                return render_template("statusdeclined.html")
+                return render_template("statusdeclined.html",data=st[1])
             else:
                 return render_template("statusaccepted.html")
             con.close()

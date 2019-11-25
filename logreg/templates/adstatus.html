@@ -20,6 +20,9 @@
 
 </form>
 {% else %}
+<div class="row">
+
+    <div class="col md-4">
 <form method="POST" type="">
     <label>Enter The date</label>
     <input type="text" name="date" placeholder="YYYY-MM-DD" class="button button3"><br><br>
@@ -37,6 +40,7 @@
 
 </form>
 <br><br>
+
 <table>
   <tr>
     <th><div class="eff-4">application no: </div></th>
@@ -50,12 +54,33 @@
 </tr>
 {% endfor %}
 </table>
+</div>
 
-
+</div>
 {% endif %}
 </center>
 </div>
 <style>
+   table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 50%;
+        }
 
+        th {
+          border: 5px solid white;
+          text-align: center;
+          background-color: rgb(151, 241, 241);
+          padding: 8px;
+        }
+        td{
+          border: 5px solid #dddddd;
+          text-align: center;
+          padding: 8px;
+        }
+        
+        tr:nth-child(even) {
+          background-color: #dddddd;
+        }
 </style>
 {% endblock %}
