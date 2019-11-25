@@ -850,10 +850,10 @@ def admindlr():
      return render_template('admindlr.html')
 @app.route('/dlredit/<email>',methods=['GET','POST'])
 def updatedatabase(email):
-     feedback=request.form.get('feedback')
      curdate = date.today()
+     feedback=str(request.form.get('feedback'))
      accepted = "Your DLR Has Been Accepted"
-     rejected = "Your DLR Has Been Rejected:"+feedback
+     rejected = "Your DLR Has Been Rejected. Feed Back From Admin Is"+feedback
      with sqlite3.connect('r.db') as con:
             cur=con.cursor()
             
