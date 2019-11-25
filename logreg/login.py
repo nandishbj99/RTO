@@ -217,12 +217,13 @@ def login():
     return render_template("login_page.html",form=form)
 
 @app.route('/otpv',methods=['POST','GET'])
-def otpv():
+def otpv():  
     form=myform(request.form)
     email=form.email.data
     otpc=str(generateOTP())
+    message = "Your OTP is "+ otpc
     session['otpc']=otpc     
-    """mail(email,"Your OTP is "+ otp)"""
+    mail(email,message)
     print(otpc)
     data="otpdata"
     return render_template('reg.html',form=form,data=data)
@@ -560,7 +561,7 @@ def llrstatus():
             st=cur.fetchone()
             if st[0] == "pending":
                 return render_template("statuspending.html") 
-            elif st[0] == "declined":
+            elif st[0] == "rejected":
                 return render_template("statusdeclined.html")
             else:
                 return render_template("statusaccepted.html")
@@ -578,7 +579,7 @@ def dlrstatus():
             st=cur.fetchone()
             if st[0] == "pending":
                 return render_template("statuspending.html") 
-            elif st[0] == "declined":
+            elif st[0] == "rejected":
                 return render_template("statusdeclined.html")
             else:
                 return render_template("statusaccepted.html")
@@ -595,7 +596,7 @@ def vrstatus():
             st=cur.fetchone()
             if st[0] == "pending":
                 return render_template("statuspending.html") 
-            elif st[0] == "declined":
+            elif st[0] == "rejected":
                 return render_template("statusdeclined.html")
             else:
                 return render_template("statusaccepted.html")
