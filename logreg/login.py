@@ -53,8 +53,8 @@ class llr_user(Form):
     district=StringField('District',[validators.DataRequired()])
     state=StringField('State',[validators.DataRequired()])
     country=StringField('Country',[validators.DataRequired()])
-    dob=StringField('Date Of Birth',[validators.DataRequired(),validators.Length(min=10,max=10)])
-    age=IntegerField('Age')
+    """dob=StringField('Date Of Birth',[validators.DataRequired(),validators.Length(min=10,max=10)])
+    age=IntegerField('Age')"""
     gender=SelectField('Gender',choices=[('male','male'),('female','female')])
     phone=IntegerField('Phone')
     blood_group=StringField('Blood Group',[validators.DataRequired()])
@@ -358,68 +358,75 @@ def showpdf():
 def llrapply():
     form=llr_user(request.form)
     if(request.method =='POST' and form.validate()):
-        firstname=form.firstname.data
-        lastname=form.lastname.data
-        fathersname=form.fathersname.data
-        email=form.email.data
-        address=form.address.data
-        pincode=form.pincode.data
-        city=form.city.data
-        district=form.district.data
-        state=form.state.data
-        country=form.country.data
-        dob=form.dob.data
-        age=form.age.data
-        gender=form.gender.data
-        phone=form.phone.data
-        bloodgroup=form.blood_group.data
-        currentdate= date.today()
-        expirydate = date.today()+timedelta(30)
-        typee=request.form['typee']
-        rtooffice=form.rtooffice.data
-        with sqlite3.connect('r.db') as con:
+        age=int(request.form['age'])
+        if age>=18:
+            firstname=form.firstname.data
+            lastname=form.lastname.data
+            fathersname=form.fathersname.data
+            email=form.email.data
+            address=form.address.data
+            pincode=form.pincode.data
+            city=form.city.data
+            district=form.district.data
+            state=form.state.data
+            country=form.country.data
+            dob=request.form['dob']
+            age=request.form['age']
+            gender=form.gender.data
+            phone=form.phone.data
+            bloodgroup=form.blood_group.data
+            currentdate= date.today()
+            expirydate = date.today()+timedelta(30)
+            typee=request.form['typee']
+            rtooffice=form.rtooffice.data
+            with sqlite3.connect('r.db') as con:
                 try:
                     cur=con.cursor()
                     cur.execute("SELECT code FROM rtocodes WHERE rto=?",(rtooffice,))
                     t=cur.fetchone()
                 except:
                     print("error in selecting codes from database")
-        con.close()
-        now=datetime.now()
-        number=random.randint(10000,80000)
-        llrno=t[0]+ str(now.year) + str(number)
+            con.close()
+            now=datetime.now()
+            number=random.randint(10000,80000)
+            llrno=t[0]+ str(now.year) + str(number)
 
 
-        #files_
+            #files_
         
-        aadharpdf= request.files["aadhar"]  
-        sslcpdf = request.files["sslc"]
-        voteridpdf = request.files["voterid"]
-        photo= request.files["photo"]
-        signature= request.files["signature"]
-        status="pending"
-        with sqlite3.connect('r.db') as con:
-            try:
-                cur=con.cursor()
-                cur.execute("INSERT INTO llr (firstname,lastname,fathername,email,address,pincode,city,district,state,country,dob,age,gender,phone,bloodgroup,currentdate,expirydate,status,type,rto,llrno) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(firstname,lastname,fathersname,email,address,pincode,city,district,state,country,dob,age,gender,phone,bloodgroup,currentdate,expirydate,status,typee,rtooffice,llrno))
-                con.commit()
-                
+            aadharpdf= request.files["aadhar"]  
+            sslcpdf = request.files["sslc"]
+            voteridpdf = request.files["voterid"]
+            photo= request.files["photo"]
+            signature= request.files["signature"]
+            status="pending"
+            with sqlite3.connect('r.db') as con:
                 try:
-                    mongo.save_file(aadharpdf.filename,aadharpdf)
-                    mongo.save_file(sslcpdf.filename,sslcpdf)
-                    mongo.save_file(voteridpdf.filename,voteridpdf)
-                    mongo.save_file(signature.filename,signature)
-                    mongo.save_file(photo.filename,photo)
-                    mongo.db.users.insert({'email':email,'aadharpdf':aadharpdf.filename,'sslcpdf':sslcpdf.filename,'voterid':voteridpdf.filename,'signature':signature.filename,'photo':photo.filename})
-                    flash("reg successfully")
-                except:
-                    flash("mongo error")
-            except:
-                con.rollback()
-                flash("error occur")
-        con.close()
+                    cur=con.cursor()
+                    cur.execute("INSERT INTO llr (firstname,lastname,fathername,email,address,pincode,city,district,state,country,dob,age,gender,phone,bloodgroup,currentdate,expirydate,status,type,rto,llrno) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(firstname,lastname,fathersname,email,address,pincode,city,district,state,country,dob,age,gender,phone,bloodgroup,currentdate,expirydate,status,typee,rtooffice,llrno))
+                    con.commit()
                 
-        return redirect(url_for('userdash'))
+                    try:
+                        mongo.save_file(aadharpdf.filename,aadharpdf)
+                        mongo.save_file(sslcpdf.filename,sslcpdf)
+                        mongo.save_file(voteridpdf.filename,voteridpdf)
+                        mongo.save_file(signature.filename,signature)
+                        mongo.save_file(photo.filename,photo)
+                        mongo.db.users.insert({'email':email,'aadharpdf':aadharpdf.filename,'sslcpdf':sslcpdf.filename,'voterid':voteridpdf.filename,'signature':signature.filename,'photo':photo.filename})
+                        flash("reg successfully")
+                    except:
+                        flash("mongo error")
+                except:
+                    con.rollback()
+                    flash("error occur")
+            con.close()
+                
+            return redirect(url_for('userdash'))
+        else:
+            flash("your age must be greater than 18 to apply LLR")
+            return render_template("appllr.html",form=form)
+
+        
     else:
         
         with sqlite3.connect('r.db') as con:
