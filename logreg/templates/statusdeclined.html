@@ -14,8 +14,13 @@
         
       </ol>
     </section>
+<<<<<<< HEAD
     <p>Reasons By Admin :</p>
 {{data}}
+=======
+    <p>Your Request Is Rejected</p>
+    <p>Reason By admin : {{data[0]}}</p>
+>>>>>>> 3b7819a36c71c1dba897c3b9058eba0d1118ea74
 
 
         </center>
@@ -37,10 +42,13 @@
             }
             
             body {
-              margin: 2rem;
-              font-family: 'Open Sans', sans-serif;
-              color: var(--color-black);
-            }
+      margin: 2rem;
+      font-family: 'Open Sans', sans-serif;
+      color: var(--color-black);
+      background: #0F2027;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #2C5364, #203A43, #0F2027);  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #2C5364, #203A43, #0F2027);
+    }
             
             h2 {
               color: var(--color-gray);

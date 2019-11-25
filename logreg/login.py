@@ -811,9 +811,9 @@ def getdetails(email):
 @app.route('/edit/<email>',methods=['GET','POST'])
 def updatellrdatabase(email):
      curdate = date.today()
-     feedback=request.form.get('feedback')
+     feedback=str(request.form.get('feedback'))
      accepted = "Your LLR Has Been Accepted"
-     rejected = "Your LLR Has Been Rejected because"+feedback
+     rejected = "Your LLR Has Been Rejected. Feed Back From Admin Is"+feedback
      
      with sqlite3.connect('r.db') as con:
             cur=con.cursor()
