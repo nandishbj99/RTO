@@ -215,23 +215,30 @@ def login():
 
     return render_template("login_page.html",form=form)
 
-
+@app.route('/otpv',methods=['POST','GET'])
+def otpc():
+    form=myform(request.form)
+    otp = form.otp.data
+    if otp = session.get('otp'):
+        validotp=1
+    else:
+        validotp=0
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::register page
 @app.route('/register',methods=['POST','GET'])
 def reg():
     form=myform(request.form)
+    otp=str(generateOTP())
     if request.method=='POST' and form.validate():
         fname=form.firstname.data
         lname=form.lastname.data
         phone=form.phone.data
         password=form.password.data
-        email=form.email.data
-        otp=str(generateOTP())
+        email=form.email.data     
         mail(email,"Your OTP is "+ otp)
 
 
-        if(valid otp):
+        if(validotp):
             with sqlite3.connect('r.db') as con:
                 try:
                     cur=con.cursor()
@@ -246,7 +253,7 @@ def reg():
         else:
             flash("Invalid OTP",'danger')
     else:
-        return render_template('reg.html',form=form)
+        return render_template('otpv.html',form=form)
 #::::::::::::::::::::::::::::::::::::::::::::profile edit
 @app.route('/profileedit',methods=['POST','GET'])
 def profileedit():
