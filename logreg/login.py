@@ -39,6 +39,7 @@ class myform(Form):
     confirm=PasswordField('Confirm Password')
     lastname=StringField('Lastname',[validators.Length(min=1,max=10)])
     phone=TextField("Phone",[validators.Length(min=1,max=10)])
+    otp=IntegerField("Enter OTP")
 
 #validating the LLR_user deatils
 class llr_user(Form):
@@ -134,7 +135,7 @@ def mail(email,message):
 
 
   
-def OTPgenerator() :
+def generateOTP() :
     return random. randrange(1000, 9999, 20)
 
 
@@ -216,29 +217,31 @@ def login():
     return render_template("login_page.html",form=form)
 
 @app.route('/otpv',methods=['POST','GET'])
-def otpc():
+def otpv():
     form=myform(request.form)
-    otp = form.otp.data
-    if otp = session.get('otp'):
-        validotp=1
-    else:
-        validotp=0
+    email=form.email.data
+    otpc=str(generateOTP())
+    session['otpc']=otpc     
+    """mail(email,"Your OTP is "+ otp)"""
+    print(otpc)
+    data="otpdata"
+    return render_template('reg.html',form=form,data=data)
+    
 
 #::::::::::::::::::::::::::::::::::::::::::::::::::::register page
 @app.route('/register',methods=['POST','GET'])
 def reg():
     form=myform(request.form)
-    otp=str(generateOTP())
+    
     if request.method=='POST' and form.validate():
         fname=form.firstname.data
         lname=form.lastname.data
         phone=form.phone.data
         password=form.password.data
         email=form.email.data     
-        mail(email,"Your OTP is "+ otp)
+        otp=form.otp.data
 
-
-        if(validotp):
+        if(str(otp)==session.get('otpc')):
             with sqlite3.connect('r.db') as con:
                 try:
                     cur=con.cursor()
@@ -249,11 +252,15 @@ def reg():
                     con.rollback()
                     flash("error occur")
             con.close()
+            session.pop('otpc',None)
             return redirect(url_for('login'))
         else:
             flash("Invalid OTP",'danger')
+            data="otpdata"
+            return render_template('reg.html',form=form,data=data)
     else:
-        return render_template('otpv.html',form=form)
+        data="nodata"
+        return render_template('reg.html',form=form,data=data)
 #::::::::::::::::::::::::::::::::::::::::::::profile edit
 @app.route('/profileedit',methods=['POST','GET'])
 def profileedit():
