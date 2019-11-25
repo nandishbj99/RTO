@@ -9,6 +9,7 @@ import pdfkit
 from datetime import date,timedelta,datetime
 from flask_wtf.file import FileField, FileRequired
 import random
+import math, random 
 import io
 import base64
 
@@ -132,6 +133,10 @@ def mail(email,message):
     server.quit()
 
 
+  
+def OTPgenerator() :
+    return random. randrange(1000, 9999, 20)
+
 
 
 
@@ -222,17 +227,24 @@ def reg():
         phone=form.phone.data
         password=form.password.data
         email=form.email.data
-        with sqlite3.connect('r.db') as con:
-            try:
-                cur=con.cursor()
-                cur.execute("INSERT INTO users (email,password,firstname,lastname,phone) VALUES (?,?,?,?,?)",(email,hashlib.md5(password.encode()).hexdigest(),fname,lname,phone))
-                con.commit()
-                flash("Registered Successfully",'success')
-            except:
-                con.rollback()
-                flash("error occur")
-        con.close()
-        return redirect(url_for('reg'))
+        otp=str(generateOTP())
+        mail(email,"Your OTP is "+ otp)
+
+
+        if(valid otp):
+            with sqlite3.connect('r.db') as con:
+                try:
+                    cur=con.cursor()
+                    cur.execute("INSERT INTO users (email,password,firstname,lastname,phone) VALUES (?,?,?,?,?)",(email,hashlib.md5(password.encode()).hexdigest(),fname,lname,phone))
+                    con.commit()
+                    flash("Registered Successfully",'success')
+                except:
+                    con.rollback()
+                    flash("error occur")
+            con.close()
+            return redirect(url_for('login'))
+        else:
+            flash("Invalid OTP",'danger')
     else:
         return render_template('reg.html',form=form)
 #::::::::::::::::::::::::::::::::::::::::::::profile edit
