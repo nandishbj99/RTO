@@ -56,7 +56,7 @@ class llr_user(Form):
     """dob=StringField('Date Of Birth',[validators.DataRequired(),validators.Length(min=10,max=10)])
     age=IntegerField('Age')"""
     gender=SelectField('Gender',choices=[('male','male'),('female','female')])
-    phone=IntegerField('Phone')
+    phone=IntegerField("Phone",[validators.NumberRange(min=10)])
     blood_group=StringField('Blood Group',[validators.DataRequired()])
     rtooffice=SelectField(choices=ChoicesByDb(),label="RTO Office")
     
@@ -827,6 +827,7 @@ def updatellrdatabase(email):
                 return redirect(url_for('adminllr'))
             else:
                 cur.execute("UPDATE llr SET status=?,admindate=?,feedback=? WHERE email=?",("rejected",curdate,feedback,email))
+
                 mail(email,rejected)
                 con.commit()
                 return redirect(url_for('adminllr'))
@@ -852,6 +853,7 @@ def admindlr():
 @app.route('/dlredit/<email>',methods=['GET','POST'])
 def updatedatabase(email):
      curdate = date.today()
+     dlnum = "Ka"+str(random.randrange(1000,9999))
      feedback=str(request.form.get('feedback'))
      accepted = "Your DLR Has Been Accepted"
      rejected = "Your DLR Has Been Rejected. Feed Back From Admin Is"+feedback
@@ -859,7 +861,7 @@ def updatedatabase(email):
             cur=con.cursor()
             
             if request.form['action'] == "accept":
-                cur.execute("UPDATE dlr SET status=?,admindate=?,feedback=? WHERE email=?",("accepted",curdate,feedback,email))
+                cur.execute("UPDATE dlr SET status=?,admindate=?,feedback=?,dlnumber=? WHERE email=?",("accepted",curdate,feedback,dlnum,email))
                 
                 con.commit()
                 mail(email,accepted)
@@ -943,7 +945,11 @@ def updatevdatabase(enginenumber):
 @app.route('/adstatus',methods=['GET','POST'])
 def adstatus():
     if request.method=='POST':
+        
+        acc = "accepted"
+        rej = "rejected"
         date = request.form['date']
+        ff="%%%%-"+date+"-%%"
         typee=request.form['typee']
         with sqlite3.connect('r.db') as con:
             cur=con.cursor()
@@ -952,13 +958,20 @@ def adstatus():
             elif typee=="dlr":
                 cur.execute("SELECT applno,status FROM dlr WHERE admindate=?",(date,))
             elif typee=="vehicle":
-                 cur.execute("SELECT applno,status FROM vehicle WHERE admindate=?",(date,))
-            data=cur.fetchall()
-        return render_template("adstatus.html",data=data)
+                 cur.execute("SELECT applno,status FROM vehicle WHERE admindate LIKE ?",(ff,))
+                 data=cur.fetchall()
+                 cur.execute("SELECT count(*) from vehicle where admindate LIKE ? and status=?",(ff,acc))
+                 c1=cur.fetchone()
+                 cur.execute("SELECT count(*) from vehicle where admindate LIKE ? and status=?",(ff,acc))
+                 c2=cur.fetchone()
+            
+        return render_template("adstatus.html",data=data,c1=c1,c2=c2)
         
              
     data="none"
-    return render_template("adstatus.html",data=data)
+    c1="0"
+    c2="0"
+    return render_template("adstatus.html",data=data,c1=c1,c2=c2)
 
     
 
