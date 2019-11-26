@@ -38,7 +38,7 @@ class myform(Form):
     password=PasswordField('NewPassword',[validators.DataRequired(),validators.EqualTo('confirm', message='Password Is Not Matching')])
     confirm=PasswordField('Confirm Password')
     lastname=StringField('Lastname',[validators.Length(min=1,max=10)])
-    phone=TextField("Phone",[validators.Length(min=1,max=10)])
+    phone=IntegerField("Phone",[validators.NumberRange(min=10)])
     otp=IntegerField("Enter OTP")
 
 #validating the LLR_user deatils
@@ -235,6 +235,7 @@ def otpv():
 def reg():
     form=myform(request.form)
     
+    
     if request.method=='POST' and form.validate():
         fname=form.firstname.data
         lname=form.lastname.data
@@ -252,7 +253,7 @@ def reg():
                     flash("Registered Successfully",'success')
                 except:
                     con.rollback()
-                    flash("error occur")
+                    flash("Already Existing User","warning")
             con.close()
             session.pop('otpc',None)
             return redirect(url_for('login'))
@@ -658,7 +659,7 @@ def dlllr():
             else:
                 flash("No LLR Found","danger")
 
-    return render_template("userdashboard.html")
+    return redirect(url_for('userdash'))
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::dlr download
 @app.route('/dldlr')
 def dldlr():
@@ -683,7 +684,7 @@ def dldlr():
                 flash("No Drivers Licence Found","danger")
 
 
-    return render_template("userdashboard.html")
+    return redirect(url_for('userdash'))
 
 #::::::::::::::::::::::::::::::::::::::::::::vehicle register download:::::::
 @app.route('/dlvr',methods = ["POST","GET"])
