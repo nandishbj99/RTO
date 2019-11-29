@@ -1,0 +1,116 @@
+{
+  "id": "bd865cf1-adb7-46de-8fa7-3ec7da72480d",
+  "version": "2.0",
+  "name": "RTO DATABASE",
+  "url": "http://127.0.0.1:5000",
+  "tests": [{
+    "id": "f4de82f6-8864-466b-b2ca-45a22664662c",
+    "name": "Login_User",
+    "commands": [{
+      "id": "6d3f8520-84a1-40fe-bf69-2cc81a69ede6",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "9c06fbb0-c14f-4ed9-8a31-59f1a2ebe4df",
+      "comment": "",
+      "command": "setWindowSize",
+      "target": "1920x1053",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "d1c9643f-96d0-4bbc-8b25-9065b8470c1f",
+      "comment": "",
+      "command": "click",
+      "target": "css=.fa-user-circle",
+      "targets": [
+        ["css=.fa-user-circle", "css:finder"],
+        ["xpath=//div[@id='navbarSupportedContent']/div/a/i", "xpath:idRelative"],
+        ["xpath=//div/a/i", "xpath:position"],
+        ["xpath=//i[contains(.,' User Login')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "fd3f51d5-ea54-4750-993f-d9899a5f38a6",
+      "comment": "",
+      "command": "click",
+      "target": "id=email",
+      "targets": [
+        ["id=email", "id"],
+        ["name=email", "name"],
+        ["css=#email", "css:finder"],
+        ["xpath=//input[@id='email']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div/div[2]/form/div/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "95c70f33-0a6c-4c9f-aab0-ca90dcd132ca",
+      "comment": "",
+      "command": "type",
+      "target": "id=email",
+      "targets": [
+        ["id=email", "id"],
+        ["name=email", "name"],
+        ["css=#email", "css:finder"],
+        ["xpath=//input[@id='email']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div/div[2]/form/div/input", "xpath:idRelative"],
+        ["xpath=//input", "xpath:position"]
+      ],
+      "value": "pavankumarkn.pkk@gmail.com"
+    }, {
+      "id": "57b28863-5907-45bd-8742-d177aed870ce",
+      "comment": "",
+      "command": "click",
+      "target": "id=password",
+      "targets": [
+        ["id=password", "id"],
+        ["name=password", "name"],
+        ["css=#password", "css:finder"],
+        ["xpath=//input[@id='password']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div/div[2]/form/div[2]/input", "xpath:idRelative"],
+        ["xpath=//div[2]/input", "xpath:position"]
+      ],
+      "value": ""
+    }, {
+      "id": "f99bee86-d5f5-4304-92a6-de0b044bbf42",
+      "comment": "",
+      "command": "type",
+      "target": "id=password",
+      "targets": [
+        ["id=password", "id"],
+        ["name=password", "name"],
+        ["css=#password", "css:finder"],
+        ["xpath=//input[@id='password']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div/div[2]/form/div[2]/input", "xpath:idRelative"],
+        ["xpath=//div[2]/input", "xpath:position"]
+      ],
+      "value": "1234"
+    }, {
+      "id": "7aadd865-8c9c-44c1-a90d-30ec5416c3c4",
+      "comment": "",
+      "command": "click",
+      "target": "name=login",
+      "targets": [
+        ["name=login", "name"],
+        ["css=.button1", "css:finder"],
+        ["xpath=//input[@name='login']", "xpath:attributes"],
+        ["xpath=//div[@id='content']/div/div/div[2]/form/input", "xpath:idRelative"],
+        ["xpath=//form/input", "xpath:position"]
+      ],
+      "value": ""
+    }]
+  }],
+  "suites": [{
+    "id": "eca52bc4-a4a0-4942-afb6-766938ceddf9",
+    "name": "Default Suite",
+    "persistSession": false,
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["f4de82f6-8864-466b-b2ca-45a22664662c"]
+  }],
+  "urls": ["http://127.0.0.1:5000/"],
+  "plugins": []
+}
